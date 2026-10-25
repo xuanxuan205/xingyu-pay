@@ -1,6 +1,6 @@
 NOTICE
 
-This repository is a security-hardened derivative of PayPro / codewendao.
+This repository is a security-hardened derivative of xingyu-pay / codewendao.
 
 The source workspace used to build this snapshot did not contain an upstream
 LICENSE file. Before publishing this repository, confirm that you have the
