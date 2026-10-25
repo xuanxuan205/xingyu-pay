@@ -1,21 +1,23 @@
 <div align="center">
-
-<img src="frontend/static/assets/images/brand-mark.svg" width="92" height="92" alt="星屿支付">
-
-# 星屿支付 · Xingyu Pay
-
-**固定金额 · 支付宝 / 微信 · 邮件审核 · 前后端分离**
-
-把个人收款做成一个体面、可控、属于自己的页面。
-
-[![License](https://img.shields.io/badge/license-MIT-0b6b5b?style=flat-square)](LICENSE)
-[![Java](https://img.shields.io/badge/Java-8-c08a2e?style=flat-square)](pom.xml)
-[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-2.3-0b6b5b?style=flat-square)](pom.xml)
-[![MySQL](https://img.shields.io/badge/MySQL-5.7%2B-2f6f8f?style=flat-square)](deploy/database.sql)
-[![Deploy](https://img.shields.io/badge/deploy-BaoTa%20Panel-c08a2e?style=flat-square)](docs/BAOTA_DEPLOY.md)
-
-[界面预览](#界面预览) · [功能](#功能) · [快速开始](#快速开始) · [宝塔部署](#宝塔面板部署) · [安全设计](#安全设计) · [OpenAPI](OPEN_API.md)
-
+  <img src="frontend/static/assets/images/brand-mark.svg" width="92" height="92" alt="星屿支付">
+  <h1>星屿支付 · Xingyu Pay</h1>
+  <p><strong>固定金额 · 支付宝 / 微信 · 邮件审核 · 前后端分离</strong></p>
+  <p>把个人收款做成一个体面、可控、属于自己的页面。</p>
+  <p>
+    <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-0b6b5b?style=flat-square" alt="License"></a>
+    <a href="pom.xml"><img src="https://img.shields.io/badge/Java-8-c08a2e?style=flat-square" alt="Java"></a>
+    <a href="pom.xml"><img src="https://img.shields.io/badge/Spring%20Boot-2.3-0b6b5b?style=flat-square" alt="Spring Boot"></a>
+    <a href="deploy/database.sql"><img src="https://img.shields.io/badge/MySQL-5.7%2B-2f6f8f?style=flat-square" alt="MySQL"></a>
+    <a href="docs/BAOTA_DEPLOY.md"><img src="https://img.shields.io/badge/deploy-BaoTa%20Panel-c08a2e?style=flat-square" alt="BaoTa Panel"></a>
+  </p>
+  <p>
+    <a href="#界面预览">界面预览</a> ·
+    <a href="#功能">功能</a> ·
+    <a href="#快速开始">快速开始</a> ·
+    <a href="#宝塔面板部署">宝塔部署</a> ·
+    <a href="#安全设计">安全设计</a> ·
+    <a href="OPEN_API.md">OpenAPI</a>
+  </p>
 </div>
 
 ---
