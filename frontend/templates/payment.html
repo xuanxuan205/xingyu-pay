@@ -4,9 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="星屿支付确认支付页面。">
+    <meta name="theme-color" content="#0b1f1a">
     <link rel="icon" href="/assets/images/favicon.svg" type="image/svg+xml">
     <link rel="alternate icon" href="/assets/images/favicon.ico" sizes="any">
     <link rel="apple-touch-icon" href="/assets/images/apple-touch-icon.png">
+    <link rel="manifest" href="/site.webmanifest">
     <title>确认支付 · 星屿支付</title>
     <script src="https://cdn.bootcdn.net/ajax/libs/vue/3.3.4/vue.global.min.js"></script>
     <link rel="stylesheet" href="/css/common.css">
@@ -14,54 +16,54 @@
     <script src="/assets/js/http-util.js"></script>
     <script src="/assets/js/qcode.min.js"></script>
     <style>
-        .page-wrap { padding: 36px 0 44px; }
-        .page-intro { text-align: center; margin: 42px 0 30px; }
-        .page-intro h1 { margin-top: 14px; }
-        .page-intro p { color: var(--text-muted); margin-top: 8px; }
-        .payment-layout { display: grid; grid-template-columns: 1.08fr .92fr; gap: 22px; align-items: stretch; max-width: 960px; margin: 0 auto; }
-        .payment-card { padding: 30px; }
-        .status-pill { display: inline-flex; align-items: center; gap: 7px; padding: 6px 11px; border-radius: 999px; border: 1px solid rgba(39,120,92,.18); background: rgba(39,120,92,.07); color: var(--success-color); font-size: .76rem; font-weight: 700; }
-        .status-pill::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
-        .summary { display: grid; grid-template-columns: 1fr 1fr; gap: 0; margin-top: 17px; border-top: 1px solid var(--border-color); }
-        .summary-item { padding: 16px 0; border-bottom: 1px solid var(--border-color); }
-        .summary-item:nth-child(odd) { padding-right: 16px; }
-        .summary-item:nth-child(even) { padding-left: 16px; border-left: 1px solid var(--border-color); }
-        .summary-item .label { color: var(--text-muted); font-size: .74rem; margin-bottom: 4px; }
-        .summary-item .value { font-size: .96rem; font-weight: 600; word-break: break-all; }
-        .summary-item .value.amount { color: var(--primary-color); font-family: "Iowan Old Style", "Palatino Linotype", serif; font-size: 1.5rem; }
-        .qr-stage { margin-top: 24px; padding: 22px; border-radius: var(--radius-md); background: var(--surface-soft); border: 1px solid var(--border-color); display: flex; flex-direction: column; align-items: center; }
-        .qr-wrap { display: flex; align-items: center; justify-content: center; min-height: 232px; }
-        .qr-image { width: 220px; height: 220px; max-width: 100%; object-fit: contain; border-radius: 10px; border: 7px solid #fff; box-shadow: 0 5px 20px rgba(55,43,24,.08); }
-        #qrcode-canvas { border-radius: 10px; background: #fff; padding: 7px; max-width: 100%; }
-        .countdown { margin-top: 12px; color: var(--warning-color); font-size: .86rem; font-weight: 700; }
+        .page-intro { max-width: 720px; margin: 48px auto 26px; text-align: center; }
+        .page-intro h1 { margin-top: 12px; }
+        .page-intro p { margin-top: 7px; color: var(--text-muted); font-size: .94rem; }
+        .status-pill { display: inline-flex; align-items: center; gap: 7px; padding: 6px 11px; border: 1px solid rgba(23,122,84,.18); border-radius: 999px; color: var(--success-color); background: rgba(23,122,84,.07); font-size: .72rem; font-weight: 800; letter-spacing: .05em; }
+        .status-pill::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; box-shadow: 0 0 0 4px rgba(23,122,84,.1); }
+        .payment-layout { max-width: 980px; margin: 0 auto; }
+        .payment-card { padding: 0; overflow: hidden; }
+        .payment-head { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 22px 26px; border-bottom: 1px solid var(--border-color); background: linear-gradient(180deg, #fffefa, #f9faf6); }
+        .payment-head h2 { font-family: var(--font-display); font-size: 1.25rem; }
+        .payment-head .pay-tag { padding: 6px 10px; border-radius: 999px; color: var(--primary-color); background: var(--primary-soft); font-size: .72rem; font-weight: 700; }
+        .summary { display: grid; grid-template-columns: repeat(4, 1fr); border-bottom: 1px solid var(--border-color); }
+        .summary-item { padding: 17px 20px; border-right: 1px solid var(--border-color); }
+        .summary-item:last-child { border-right: 0; }
+        .summary-item .label { margin-bottom: 4px; color: var(--text-muted); font-size: .68rem; font-weight: 700; letter-spacing: .05em; }
+        .summary-item .value { color: var(--text-color); font-size: .88rem; font-weight: 700; word-break: break-all; }
+        .summary-item .value.amount { color: var(--primary-color); font-family: var(--font-display); font-size: 1.5rem; line-height: 1.15; }
+        .qr-stage { display: flex; flex-direction: column; align-items: center; padding: 28px 24px 24px; background: radial-gradient(circle at 50% 0, rgba(11,107,91,.065), transparent 20rem); }
+        .qr-wrap { display: flex; align-items: center; justify-content: center; min-height: 234px; }
+        .qr-image { width: 222px; height: 222px; max-width: 100%; border: 8px solid #fff; border-radius: 14px; box-shadow: 0 16px 36px rgba(18,48,40,.13); object-fit: contain; }
+        #qrcode-canvas { max-width: 100%; padding: 7px; border-radius: 12px; background: #fff; }
+        .scan-line { width: 228px; height: 1px; margin-top: 12px; background: linear-gradient(90deg, transparent, rgba(11,107,91,.4), transparent); }
+        .countdown { margin-top: 14px; color: var(--warning-color); font-size: .83rem; font-weight: 700; }
         .countdown.success { color: var(--success-color); }
         .countdown.danger { color: var(--danger-color); }
-        .actions { display: flex; gap: 9px; justify-content: center; margin-top: 20px; flex-wrap: wrap; }
-        .tips { margin-top: 14px; color: var(--text-muted); font-size: .8rem; text-align: center; line-height: 1.7; }
+        .payment-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 9px; padding: 0 24px 20px; }
+        .tips { padding: 0 24px 24px; color: var(--text-muted); font-size: .78rem; line-height: 1.7; text-align: center; }
         .tips strong { color: var(--text-color); }
-        .tips .code { display: inline-block; padding: 2px 7px; margin: 0 2px; border-radius: 5px; background: #fffdf8; border: 1px solid var(--border-color); color: var(--primary-color); font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-weight: 700; }
-        .side-card { padding: 30px; background: #113c34; color: #f9f4e8; border-color: #113c34; }
-        .side-card h2 { font-family: "Iowan Old Style", "Palatino Linotype", "Noto Serif SC", serif; font-size: 1.35rem; margin-bottom: 18px; }
-        .side-card p { color: rgba(249,244,232,.65); font-size: .87rem; line-height: 1.9; }
-        .side-list { margin-top: 24px; display: grid; gap: 15px; }
-        .side-item { padding-top: 15px; border-top: 1px solid rgba(249,244,232,.14); }
-        .side-item span { display: block; color: rgba(249,244,232,.5); font-size: .73rem; margin-bottom: 4px; }
-        .side-item strong { font-size: .9rem; font-weight: 500; color: #f9f4e8; }
-        .wechat-notice-overlay { position: fixed; inset: 0; background: rgba(18,34,29,.55); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
-        .wechat-notice-modal { background: var(--surface-color); color: var(--text-color); border-radius: 18px; padding: 27px; max-width: 460px; width: 100%; position: relative; box-shadow: 0 25px 70px rgba(0,0,0,.24); }
-        .wechat-notice-close { position: absolute; top: 10px; right: 14px; font-size: 24px; color: var(--text-muted); cursor: pointer; background: none; border: none; padding: 0; line-height: 1; }
-        .wechat-notice-title { font-size: 1.05rem; font-weight: 700; margin-bottom: 15px; }
-        .wechat-notice-text { font-size: .88rem; line-height: 1.7; color: var(--text-muted); text-align: center; margin-bottom: 8px; }
-        .wechat-paynum { color: var(--primary-color); font-weight: 800; font-size: 1.05rem; letter-spacing: .05em; }
-        .wechat-notice-image { text-align: center; margin: 14px 0; }
-        .wechat-notice-image img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid var(--border-color); }
-        .wechat-notice-btn { background: var(--primary-color); color: #fffdf7; border: none; padding: 10px 22px; border-radius: 999px; font-size: .9rem; cursor: pointer; display: block; margin: 16px auto 0; }
+        .tips .code { display: inline-block; margin: 0 2px; padding: 2px 7px; border: 1px solid var(--border-color); border-radius: 6px; color: var(--primary-color); background: #fffefa; font-family: var(--font-mono); font-weight: 700; }
+        .payment-footer-grid { display: grid; grid-template-columns: 1fr; gap: 18px; margin-top: 0; align-content: start; }
+        .info-card { padding: 22px; }
+        .info-card h3 { margin-bottom: 8px; font-family: var(--font-display); font-size: 1.08rem; }
+        .info-card p { color: var(--text-muted); font-size: .82rem; line-height: 1.8; }
+        .info-card.dark { border-color: transparent; color: #f8f4e9; background: linear-gradient(145deg, #123f35, #071f1a); }
+        .info-card.dark h3 { color: #f8f4e9; }
+        .info-card.dark p { color: rgba(248,244,233,.6); }
+        .info-card.dark a { color: #e4bd68; text-decoration: none; }
         @media (max-width: 760px) {
-            .payment-layout { grid-template-columns: 1fr; }
-            .payment-card, .side-card { padding: 23px; }
+            .summary { grid-template-columns: 1fr 1fr; }
+            .summary-item:nth-child(2) { border-right: 0; }
+            .summary-item:nth-child(-n+2) { border-bottom: 1px solid var(--border-color); }
+            .payment-footer-grid { grid-template-columns: 1fr; }
+            .payment-head { padding: 18px 20px; }
+            .summary-item { padding: 14px 16px; }
+        }
+        @media (max-width: 480px) {
             .summary { grid-template-columns: 1fr; }
-            .summary-item:nth-child(odd) { padding-right: 0; }
-            .summary-item:nth-child(even) { padding-left: 0; border-left: none; }
+            .summary-item { border-right: 0; border-bottom: 1px solid var(--border-color); }
+            .summary-item:last-child { border-bottom: 0; }
         }
     </style>
 </head>
@@ -69,13 +71,13 @@
 <div id="app">
     <div class="container page-wrap">
         <header class="site-header">
-            <a class="brand-lockup" href="home.html">
-                <img src="/assets/images/brand-mark.svg" alt="星屿支付">
+            <a class="brand-lockup" href="home.html" aria-label="星屿支付首页">
+                <img src="/assets/images/brand-mark.svg" alt="">
                 <span class="brand-name">星屿支付<span class="brand-en">Xingyu Pay</span></span>
             </a>
             <nav class="nav-links" aria-label="主导航">
                 <a href="home.html">首页</a>
-                <a href="recharge.html">支持中心</a>
+                <a href="recharge.html" aria-current="page">支持中心</a>
                 <a href="history.html">支持记录</a>
                 <a href="help.html">帮助中心</a>
             </nav>
@@ -90,13 +92,14 @@
 
             <div class="payment-layout">
                 <section class="surface payment-card">
+                    <div class="payment-head">
+                        <h2>支付二维码</h2>
+                        <span class="pay-tag">{{ payTypeName }}</span>
+                    </div>
                     <div class="summary">
                         <div class="summary-item"><div class="label">订单编号</div><div class="value">{{ orderInfo.orderId }}</div></div>
                         <div class="summary-item"><div class="label">支付渠道</div><div class="value">{{ payTypeName }}</div></div>
-                        <div class="summary-item">
-                            <div class="label">订单标识号</div>
-                            <div class="value">{{ orderInfo.payNum || '—' }}</div>
-                        </div>
+                        <div class="summary-item"><div class="label">订单标识号</div><div class="value">{{ orderInfo.payNum || '—' }}</div></div>
                         <div class="summary-item"><div class="label">应付金额</div><div class="value amount">￥{{ orderInfo.actualAmount || orderInfo.money }}</div></div>
                     </div>
 
@@ -105,6 +108,7 @@
                             <img v-if="orderInfo.useLocalQrCode === 'true' && qrImageUrl" :src="qrImageUrl" class="qr-image" alt="支付二维码" @error="handleImageError" @load="handleImageLoad">
                             <canvas v-else id="qrcode-canvas" width="220" height="220"></canvas>
                         </div>
+                        <div class="scan-line" aria-hidden="true"></div>
                         <div class="countdown" :class="{success: paymentStatus==='success', danger: paymentStatus==='timeout' || paymentStatus==='failed'}" v-if="paymentStatus==='pending'">剩余支付时间：{{ formatCountdown }}</div>
                         <div class="countdown success" v-if="paymentStatus==='success'">支付成功，感谢你的支持</div>
                         <div class="countdown danger" v-if="paymentStatus==='timeout'">订单已超时，请重新发起</div>
@@ -112,7 +116,7 @@
                         <div class="countdown danger" v-if="qrError">{{ qrError }}</div>
                     </div>
 
-                    <div class="actions">
+                    <div class="payment-actions">
                         <a href="recharge.html" class="btn btn-ghost">返回支持中心</a>
                         <a v-if="orderInfo.payType==='alipay' && qrCodeUrl" :href="qrCodeUrl" class="btn btn-primary">打开支付宝</a>
                     </div>
@@ -124,22 +128,24 @@
                     </div>
                 </section>
 
-                <aside class="surface side-card">
-                    <h2>支付说明</h2>
-                    <p>请使用对应支付应用扫描二维码。支付完成后无需关闭页面，系统会自动确认到账状态。</p>
-                    <div class="side-list">
-                        <div class="side-item"><span>支付状态</span><strong>{{ paymentStatus === 'pending' ? '每 2 秒自动查询' : (paymentStatus === 'success' ? '已确认到账' : '请重新发起') }}</strong></div>
-                        <div class="side-item"><span>订单备注</span><strong>{{ orderInfo.useLocalQrCode==='true' ? '请填写页面显示的标识号' : '支付宝页面已锁定金额' }}</strong></div>
-                        <div class="side-item"><span>遇到问题</span><strong><a href="help.html" style="color:#e4bd68;text-decoration:none;">查看帮助中心 →</a></strong></div>
-                    </div>
-                </aside>
+                <div class="payment-footer-grid">
+                    <section class="surface info-card">
+                        <h3>支付说明</h3>
+                        <p>请使用对应支付应用扫描二维码。支付完成后无需关闭页面，系统会自动查询订单状态。</p>
+                    </section>
+                    <section class="surface info-card dark">
+                        <h3>需要帮助？</h3>
+                        <p>遇到二维码加载失败、订单超时或状态未更新，请前往帮助中心查看处理方式。</p>
+                        <p style="margin-top:10px;"><a href="help.html">查看帮助中心 →</a></p>
+                    </section>
+                </div>
             </div>
         </main>
 
         <footer class="site-footer">
             <div class="footer-brand"><strong>星屿支付</strong><span>用心连接每一次支持</span></div>
             <div class="footer-links"><a href="help.html">帮助中心</a><a href="history.html">支持记录</a><a href="recharge.html">开始支付</a></div>
-            <div class="footer-meta">© 2026 星屿支付 · 保留所有权利</div>
+            <div class="footer-meta">© 2026 星屿支付 · MIT License</div>
         </footer>
     </div>
 
@@ -149,11 +155,10 @@
             <div class="wechat-notice-title">请在备注中输入支付标识号</div>
             <div class="wechat-notice-text">付款时请在备注中输入：<span class="wechat-paynum">{{ orderInfo.payNum }}</span></div>
             <div class="wechat-notice-text">若忘记输入或输入错误，可能导致订单无法自动确认。</div>
-            <div class="wechat-notice-image"><img src="assets/images/wxremark.png" alt="微信备注示例"></div>
+            <div class="wechat-notice-image"><img src="/assets/images/wxremark.png" alt="微信备注示例"></div>
             <button class="wechat-notice-btn" @click="closeWechatNotice">知道了</button>
         </div>
     </div>
-
 </div>
 
 <script th:inline="javascript">

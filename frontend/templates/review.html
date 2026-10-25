@@ -7,30 +7,32 @@
     <title>订单审核 · 星屿支付</title>
     <link rel="icon" href="/assets/images/favicon.svg" type="image/svg+xml">
     <link rel="alternate icon" href="/assets/images/favicon.ico" sizes="any">
+    <meta name="theme-color" content="#0b1f1a">
     <link rel="apple-touch-icon" href="/assets/images/apple-touch-icon.png">
+    <link rel="manifest" href="/site.webmanifest">
     <link rel="stylesheet" href="/css/common.css">
     <style>
         .review-page { min-height: 100vh; padding: 28px 16px 40px; }
         .review-card { width: min(600px, 100%); margin: 0 auto; overflow: hidden; }
-        .review-head { padding: 26px 28px; background: #113c34; color: #f9f4e8; }
+        .review-head { padding: 26px 28px; background: #123f35; color: #f8f4e9; }
         .review-head .eyebrow { color: #e4bd68; }
         .review-head h1 { font-family: "Iowan Old Style", "Palatino Linotype", "Noto Serif SC", serif; font-size: 1.45rem; margin-top: 9px; }
         .review-head p { color: rgba(249,244,232,.62); font-size: .8rem; margin-top: 6px; line-height: 1.7; }
         .review-body { padding: 24px 28px 30px; }
-        .amount-box { padding: 20px; border-radius: 15px; background: #0f6b5d; color: #f7f2e7; text-align: center; margin-bottom: 18px; }
+        .amount-box { padding: 20px; border-radius: 15px; background: #0b6b5d; color: #f7f2e7; text-align: center; margin-bottom: 18px; }
         .amount-box .label { font-size: .72rem; letter-spacing: .16em; color: #c4ded3; }
-        .amount-box .value { margin-top: 5px; font-family: Georgia, serif; font-size: 2.6rem; line-height: 1.1; color: #f0cb78; font-weight: 700; }
-        .detail-table { width: 100%; border-collapse: collapse; background: #faf5ea; border: 1px solid var(--border-color); border-radius: 13px; overflow: hidden; margin-bottom: 18px; }
+        .amount-box .value { margin-top: 5px; font-family: Georgia, serif; font-size: 2.6rem; line-height: 1.1; color: #e4bd68; font-weight: 700; }
+        .detail-table { width: 100%; border-collapse: collapse; background: #f7f9f5; border: 1px solid var(--border-color); border-radius: 13px; overflow: hidden; margin-bottom: 18px; }
         .detail-table td { padding: 11px 15px; border-bottom: 1px solid var(--border-color); font-size: .86rem; line-height: 1.6; }
         .detail-table tr:last-child td { border-bottom: none; }
         .detail-table td:first-child { color: var(--text-muted); width: 35%; }
         .detail-table td:last-child { text-align: right; word-break: break-all; }
-        .warn { padding: 12px 14px; border-left: 3px solid #b8862f; background: #f6efdf; color: #65736b; font-size: .78rem; line-height: 1.8; margin-bottom: 18px; }
+        .warn { padding: 12px 14px; border-left: 3px solid #c08a2e; background: #fbf2dd; color: #677870; font-size: .78rem; line-height: 1.8; margin-bottom: 18px; }
         .review-form { display: grid; gap: 10px; margin-bottom: 14px; }
         .review-form label { color: var(--text-muted); font-size: .78rem; }
-        .review-form input { width: 100%; padding: 12px 13px; border: 1px solid var(--border-color); border-radius: 9px; background: #fffdf8; color: var(--text-color); font: inherit; font-size: .95rem; }
+        .review-form input { width: 100%; padding: 12px 13px; border: 1px solid var(--border-color); border-radius: 9px; background: #fffefa; color: var(--text-color); font: inherit; font-size: .95rem; }
         .review-form input:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(15,107,93,.09); }
-        .btn-danger-outline { width: 100%; padding: 12px 14px; border: 1px solid #eccbc5; border-radius: 9px; background: #f8eae6; color: #b74a3d; font: inherit; font-size: .86rem; font-weight: 700; cursor: pointer; }
+        .btn-danger-outline { width: 100%; padding: 12px 14px; border: 1px solid #efd0c9; border-radius: 9px; background: #fdf1ee; color: #b74a3d; font: inherit; font-size: .86rem; font-weight: 700; cursor: pointer; }
         .done-box { padding: 18px; border-radius: 12px; background: var(--surface-soft); border: 1px solid var(--border-color); color: var(--text-muted); font-size: .86rem; line-height: 1.8; text-align: center; }
         @media (max-width: 560px) { .review-head, .review-body { padding-left: 20px; padding-right: 20px; } }
     </style>

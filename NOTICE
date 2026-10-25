@@ -1,12 +1,17 @@
-NOTICE
+Xingyu Pay / 星屿支付
 
-This repository is a security-hardened derivative of xingyu-pay / codewendao.
+Copyright (c) 2026 xuanxuan205
 
-The source workspace used to build this snapshot did not contain an upstream
-LICENSE file. Before publishing this repository, confirm that you have the
-right to redistribute the upstream code and select a license compatible with
-that right.
+This repository is a security-hardened and redesigned derivative of the
+PayPro / xingyu-pay / codewendao codebase. The MIT license above applies to the
+repository owner's original work and modifications to the extent the owner
+holds the necessary rights. Upstream components, names and trademarks remain
+the property of their respective owners.
 
-The security hardening changes in this snapshot are provided by the repository
-owner. No upstream trademark, payment account, domain, email address, phone
-number, QR code or credential is granted by this repository.
+If you believe an attribution or permission is missing, please open an issue
+with the relevant file and commit so it can be reviewed.
+
+The QR assets under qr/ are payment entry points published by the repository
+owner. Replace them with your own codes before deploying a public instance.
+No payment account, trademark, domain, email address or credential is granted
+by this repository.

@@ -203,6 +203,15 @@ public class OrderServiceImpl implements OrderService {
         if (Boolean.TRUE.equals(req.getCustom())) {
             return ResponseVO.errorResponse("不支持自定义金额，请选择页面提供的固定金额");
         }
+        if (req.getNickName() != null && req.getNickName().length() > 255) {
+            return ResponseVO.errorResponse("昵称过长");
+        }
+        if (req.getDescription() != null && req.getDescription().length() > 255) {
+            return ResponseVO.errorResponse("附言过长");
+        }
+        if (StringUtils.isNotBlank(req.getEmail()) && !EmailUtils.checkEmail(req.getEmail())) {
+            return ResponseVO.errorResponse("邮箱格式不正确");
+        }
 
         String payType = req.getPayType();
         boolean payTypeSupported = payProConfig.getPayMethods() != null
@@ -404,11 +413,16 @@ public class OrderServiceImpl implements OrderService {
 
         if (StringUtils.isNotBlank(req.getKeyword())) {
             //字符串类型的处理，统一全部like查询
-            String keyword = req.getKeyword();
-            wrapper.and(w -> w.like(Order::getEmail, keyword)
-                    .or().like(Order::getNickName, keyword));
+            String keyword = req.getKeyword().trim();
+            if (keyword.length() > 100) {
+                keyword = keyword.substring(0, 100);
+            }
+            final String search = keyword;
+            wrapper.and(w -> w.like(Order::getEmail, search)
+                    .or().like(Order::getNickName, search));
         }
-        long pageIndex = req.getPageIndex() == null || req.getPageIndex() < 1 ? 1 : req.getPageIndex();
+        long pageIndex = req.getPageIndex() == null || req.getPageIndex() < 1
+                ? 1 : Math.min(req.getPageIndex(), 100000);
         long pageSize = req.getPageSize() == null || req.getPageSize() < 1 ? 10 : Math.min(req.getPageSize(), 100);
         Page<Order> page = new Page<>(pageIndex, pageSize);
         Page<Order> payPage = orderMapper.selectPage(page, wrapper);

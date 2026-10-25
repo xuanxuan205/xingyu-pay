@@ -19,15 +19,15 @@
         }
     </style>
 </head>
-<body style="margin:0;padding:0;background:#efe8da;font-family:'PingFang SC','Microsoft YaHei','Noto Sans SC',Arial,sans-serif;color:#172722;-webkit-text-size-adjust:100%;">
+<body style="margin:0;padding:0;background:#efe8da;font-family:'PingFang SC','Microsoft YaHei','Noto Sans SC',Arial,sans-serif;color:#152520;-webkit-text-size-adjust:100%;">
 <div style="display:none;max-height:0;max-width:0;overflow:hidden;opacity:0;color:transparent;mso-hide:all;" th:text="${brandName} + ' 收到一笔新订单，等待管理员核对。'">星屿支付收到一笔新订单，等待管理员核对。</div>
 
 <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="width:100%;background:#efe8da;background-image:linear-gradient(180deg,#f6f1e7 0%,#ece3d3 100%);padding:34px 14px;">
     <tr>
         <td align="center">
-            <table role="presentation" width="620" cellspacing="0" cellpadding="0" border="0" class="mail-shell" style="width:620px;max-width:620px;background:#fffdf8;border:1px solid #d8cdb9;border-radius:22px;overflow:hidden;box-shadow:0 22px 60px rgba(48,37,21,.10);">
+            <table role="presentation" width="620" cellspacing="0" cellpadding="0" border="0" class="mail-shell" style="width:620px;max-width:620px;background:#fffefa;border:1px solid #d8cdb9;border-radius:22px;overflow:hidden;box-shadow:0 22px 60px rgba(48,37,21,.10);">
                 <tr>
-                    <td style="height:4px;line-height:4px;font-size:0;background:#b8862f;">&nbsp;</td>
+                    <td style="height:4px;line-height:4px;font-size:0;background:#c08a2e;">&nbsp;</td>
                 </tr>
                 <tr>
                     <td class="mail-pad" style="padding:25px 32px 23px;background:#123d35;">
@@ -36,7 +36,7 @@
                                 <td width="52" valign="middle">
                                     <table role="presentation" cellspacing="0" cellpadding="0" border="0">
                                         <tr>
-                                            <td width="42" height="42" align="center" valign="middle" style="width:42px;height:42px;border:1px solid #d9b76c;border-radius:13px;background:#1b4b42;color:#f0cb78;font-family:'Songti SC','SimSun',serif;font-size:21px;font-weight:700;" th:text="${brandInitial}">屿</td>
+                                            <td width="42" height="42" align="center" valign="middle" style="width:42px;height:42px;border:1px solid #d9b76c;border-radius:13px;background:#1b4b42;color:#e4bd68;font-family:'Songti SC','SimSun',serif;font-size:21px;font-weight:700;" th:text="${brandInitial}">屿</td>
                                         </tr>
                                     </table>
                                 </td>
@@ -45,7 +45,7 @@
                                     <div style="margin-top:4px;font-size:9px;line-height:1.4;letter-spacing:2.8px;color:#a8c6ba;">ADMIN REVIEW CONSOLE</div>
                                 </td>
                                 <td class="status-pill" align="right" valign="middle">
-                                    <span style="display:inline-block;padding:6px 12px;border:1px solid #8c7548;border-radius:99px;background:#3e3828;color:#f0cb78;font-size:10px;line-height:1.2;letter-spacing:1.3px;">内部审核</span>
+                                    <span style="display:inline-block;padding:6px 12px;border:1px solid #8c7548;border-radius:99px;background:#3e3828;color:#e4bd68;font-size:10px;line-height:1.2;letter-spacing:1.3px;">内部审核</span>
                                 </td>
                             </tr>
                         </table>
@@ -57,7 +57,7 @@
                             <tr>
                                 <td valign="top">
                                     <div style="font-size:10px;line-height:1.4;letter-spacing:2.4px;color:#a8761c;font-weight:700;">NEW PAYMENT / 待处理</div>
-                                    <h1 class="hero-title" style="margin:8px 0 7px;font-family:'Songti SC','SimSun',serif;font-size:27px;line-height:1.4;color:#172722;font-weight:700;">一笔新的支付等待确认</h1>
+                                    <h1 class="hero-title" style="margin:8px 0 7px;font-family:'Songti SC','SimSun',serif;font-size:27px;line-height:1.4;color:#152520;font-weight:700;">一笔新的支付等待确认</h1>
                                     <p style="margin:0;color:#728078;font-size:13px;line-height:1.8;">请核对到账记录与订单信息，再选择通过、驳回或编辑。</p>
                                 </td>
                                 <td width="70" align="right" valign="top">
@@ -73,11 +73,11 @@
                 </tr>
                 <tr>
                     <td class="mail-pad" style="padding:22px 32px 8px;">
-                        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background:#0f6b5d;background-image:linear-gradient(135deg,#126f60 0%,#0b5349 100%);border-radius:16px;overflow:hidden;">
+                        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background:#0b6b5d;background-image:linear-gradient(135deg,#126f60 0%,#0b5349 100%);border-radius:16px;overflow:hidden;">
                             <tr>
                                 <td style="padding:21px 23px 8px;color:#f7f2e7;">
                                     <div style="font-size:10px;line-height:1.4;letter-spacing:2px;color:#c4ded3;">订单金额</div>
-                                    <div style="margin-top:5px;line-height:1.1;font-size:15px;font-weight:600;color:#f0cb78;">CNY
+                                    <div style="margin-top:5px;line-height:1.1;font-size:15px;font-weight:600;color:#e4bd68;">CNY
                                         <span class="amount-value" style="font-family:Georgia,'Times New Roman',serif;font-size:43px;font-weight:700;letter-spacing:-1px;" th:text="${money}">0.00</span>
                                     </div>
                                 </td>
@@ -94,22 +94,22 @@
                 <tr>
                     <td class="mail-pad" style="padding:18px 32px 4px;">
                         <div style="margin-bottom:10px;font-size:10px;line-height:1.4;letter-spacing:2px;color:#a8761c;font-weight:700;">TRANSACTION / 交易信息</div>
-                        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background:#faf5ea;border:1px solid #e3d8c7;border-radius:14px;">
+                        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background:#f7f9f5;border:1px solid #e3d8c7;border-radius:14px;">
                             <tr>
                                 <td style="padding:13px 18px 6px;color:#748179;font-size:12px;line-height:1.6;">支付方式</td>
-                                <td align="right" style="padding:13px 18px 6px;color:#172722;font-size:13px;line-height:1.6;font-weight:600;" th:text="${payType}">-</td>
+                                <td align="right" style="padding:13px 18px 6px;color:#152520;font-size:13px;line-height:1.6;font-weight:600;" th:text="${payType}">-</td>
                             </tr>
                             <tr>
                                 <td style="padding:6px 18px;color:#748179;font-size:12px;line-height:1.6;">支付标识号</td>
-                                <td align="right" style="padding:6px 18px;color:#31453d;font-size:12px;line-height:1.6;font-family:Consolas,'Courier New',monospace;word-break:break-all;" th:text="${payNum}">-</td>
+                                <td align="right" style="padding:6px 18px;color:#2f453e;font-size:12px;line-height:1.6;font-family:Consolas,'Courier New',monospace;word-break:break-all;" th:text="${payNum}">-</td>
                             </tr>
                             <tr>
                                 <td style="padding:6px 18px;color:#748179;font-size:12px;line-height:1.6;">支付时间</td>
-                                <td align="right" style="padding:6px 18px;color:#172722;font-size:13px;line-height:1.6;" th:text="${time}">-</td>
+                                <td align="right" style="padding:6px 18px;color:#152520;font-size:13px;line-height:1.6;" th:text="${time}">-</td>
                             </tr>
                             <tr>
                                 <td style="padding:6px 18px 13px;color:#748179;font-size:12px;line-height:1.6;vertical-align:top;">订单附言</td>
-                                <td align="right" style="padding:6px 18px 13px;color:#31453d;font-size:12px;line-height:1.7;word-break:break-word;" th:text="${description}">-</td>
+                                <td align="right" style="padding:6px 18px 13px;color:#2f453e;font-size:12px;line-height:1.7;word-break:break-word;" th:text="${description}">-</td>
                             </tr>
                         </table>
                     </td>
@@ -117,14 +117,14 @@
                 <tr>
                     <td class="mail-pad" style="padding:11px 32px 4px;">
                         <div style="margin-bottom:10px;font-size:10px;line-height:1.4;letter-spacing:2px;color:#a8761c;font-weight:700;">CUSTOMER / 用户与来源</div>
-                        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background:#fffdf8;border:1px solid #e3d8c7;border-radius:14px;">
+                        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background:#fffefa;border:1px solid #e3d8c7;border-radius:14px;">
                             <tr>
                                 <td style="padding:13px 18px 6px;color:#748179;font-size:12px;line-height:1.6;">用户昵称</td>
-                                <td align="right" style="padding:13px 18px 6px;color:#172722;font-size:13px;line-height:1.6;font-weight:600;" th:text="${nickName}">-</td>
+                                <td align="right" style="padding:13px 18px 6px;color:#152520;font-size:13px;line-height:1.6;font-weight:600;" th:text="${nickName}">-</td>
                             </tr>
                             <tr>
                                 <td style="padding:6px 18px;color:#748179;font-size:12px;line-height:1.6;">通知邮箱</td>
-                                <td align="right" style="padding:6px 18px;color:#0f6b5d;font-size:12px;line-height:1.6;word-break:break-all;" th:text="${email}">-</td>
+                                <td align="right" style="padding:6px 18px;color:#0b6b5d;font-size:12px;line-height:1.6;word-break:break-all;" th:text="${email}">-</td>
                             </tr>
                             <tr>
                                 <td style="padding:6px 18px 13px;color:#748179;font-size:12px;line-height:1.6;vertical-align:top;">设备环境</td>
@@ -136,16 +136,16 @@
                 <tr>
                     <td class="mail-pad" style="padding:22px 32px 4px;">
                         <div style="margin-bottom:11px;font-size:10px;line-height:1.4;letter-spacing:2px;color:#a8761c;font-weight:700;">REVIEW / 审核操作</div>
-                        <a th:href="${reviewUrl}" target="_blank" rel="noreferrer" style="display:block;padding:14px 18px;border-radius:10px;background:#0f6b5d;color:#fffdf7;text-align:center;text-decoration:none;font-size:14px;line-height:1.2;font-weight:700;letter-spacing:.5px;">打开审核页</a>
+                        <a th:href="${reviewUrl}" target="_blank" rel="noreferrer" style="display:block;padding:14px 18px;border-radius:10px;background:#0b6b5d;color:#fffdf7;text-align:center;text-decoration:none;font-size:14px;line-height:1.2;font-weight:700;letter-spacing:.5px;">打开审核页</a>
                         <p style="margin:10px 2px 0;color:#748179;font-size:11px;line-height:1.8;">审核页会要求输入实际到账金额；金额与订单不一致不会通过。链接 30 分钟内有效，仅限管理员使用。</p>
                     </td>
                 </tr>
                 <tr>
                     <td class="mail-pad" style="padding:18px 32px 7px;">
-                        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="border-left:3px solid #b8862f;background:#f6efdf;">
+                        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="border-left:3px solid #c08a2e;background:#fbf2dd;">
                             <tr>
-                                <td style="padding:12px 15px;color:#65736b;font-size:11px;line-height:1.8;">
-                                    <strong style="color:#31453d;">重要：</strong>审核链接 30 分钟内有效，仅限管理员使用。审核通过前，请先确认款项已经实际到账，并在审核页输入实际到账金额。
+                                <td style="padding:12px 15px;color:#677870;font-size:11px;line-height:1.8;">
+                                    <strong style="color:#2f453e;">重要：</strong>审核链接 30 分钟内有效，仅限管理员使用。审核通过前，请先确认款项已经实际到账，并在审核页输入实际到账金额。
                                 </td>
                             </tr>
                         </table>
@@ -153,8 +153,8 @@
                 </tr>
                 <tr>
                     <td class="mail-pad" style="padding:19px 32px 23px;background:#f7f1e5;border-top:1px solid #e3d8c7;text-align:center;color:#7c8781;font-size:10px;line-height:1.9;">
-                        <div>本邮件由 <span style="color:#31453d;font-weight:600;" th:text="${brandName}">星屿支付</span> 自动发送给站点管理员，请勿转发。</div>
-                        <div th:if="${supportMail != null and supportMail != ''}" style="margin-top:3px;">站点支持邮箱：<a th:href="${'mailto:' + supportMail}" th:text="${supportMail}" style="color:#0f6b5d;text-decoration:none;font-weight:600;">support@example.com</a></div>
+                        <div>本邮件由 <span style="color:#2f453e;font-weight:600;" th:text="${brandName}">星屿支付</span> 自动发送给站点管理员，请勿转发。</div>
+                        <div th:if="${supportMail != null and supportMail != ''}" style="margin-top:3px;">站点支持邮箱：<a th:href="${'mailto:' + supportMail}" th:text="${supportMail}" style="color:#0b6b5d;text-decoration:none;font-weight:600;">support@example.com</a></div>
                         <div style="margin-top:9px;color:#a2aba5;">&copy; <span th:text="${year}">2026</span> <span th:text="${brandName}">星屿支付</span> · 管理通知</div>
                     </td>
                 </tr>

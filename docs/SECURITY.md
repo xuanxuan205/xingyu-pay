@@ -12,6 +12,9 @@
 - 管理统计 token 放在 URL
 - 信任客户端可伪造的 `X-Forwarded-For`
 - SQL 明文日志
+- 空管理员 token 可能通过比较
+- OpenAPI 订单号、邮箱、回调地址、有效期缺少边界校验
+- 到账金额超过两位小数仍可能被四舍五入
 
 ## 当前模型
 
@@ -22,6 +25,11 @@
 - 金额按两位小数比较。
 - 订单状态只允许 `0`（待支付）或 `4`（已扫码）。
 - 公开记录只返回成功订单，且脱敏。
+- 管理接口空 token 或短于 32 字符直接拒绝。
+- 生产启动时校验 `ADMIN_TOKEN`、`OPENAPI_SECRET`、`DB_PASSWORD`。
+- 全站安全响应头：CSP、`X-Frame-Options: DENY`、`nosniff`、Referrer-Policy、Permissions-Policy。
+- 敏感路径 `Cache-Control: no-store` 和 `noindex`。
+- OpenAPI 回调拒绝本机、内网、链路本地地址。
 
 ## 仍然存在的风险
 
@@ -32,6 +40,7 @@
 - OpenAPI 仍是 MD5 签名，没有 nonce/IP 白名单。
 - Redis 默认没有密码，生产应设置 `requirepass`。
 - 生产 JAR 仍包含 H2、Springfox、devtools，建议后续裁剪。
+- 前端使用 Vue 浏览器编译，CSP 必须允许 `unsafe-eval`。
 
 ## 报告问题
 

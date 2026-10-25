@@ -1,0 +1,26 @@
+[Unit]
+Description=Xingyu Pay backend (BaoTa)
+After=network.target mysql.service redis.service
+
+[Service]
+Type=simple
+User=www
+Group=www
+WorkingDirectory=/www/wwwroot/xingyu-pay-backend
+EnvironmentFile=/www/wwwroot/xingyu-pay-backend/.env
+ExecStart=/www/wwwroot/xingyu-pay-backend/start.sh
+Restart=always
+RestartSec=5
+LimitNOFILE=65535
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=full
+ReadWritePaths=-/www/wwwroot/xingyu-pay-backend/logs -/www/wwwroot/xingyu-pay-backend/qr
+RestrictSUIDSGID=true
+LockPersonality=true
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+
+[Install]
+WantedBy=multi-user.target

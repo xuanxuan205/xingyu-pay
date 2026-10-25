@@ -67,7 +67,7 @@ public class PageController {
         }
         if ("openAlipay".equals(view)) {
             String id = request.getParameter("id");
-            if (StringUtils.isBlank(id)) {
+            if (StringUtils.isBlank(id) || !id.matches("[0-9a-fA-F]{32}")) {
                 response.setStatus(HttpStatus.NOT_FOUND.value());
                 return "error";
             }

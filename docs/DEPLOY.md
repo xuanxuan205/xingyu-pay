@@ -1,5 +1,7 @@
 # 部署
 
+宝塔面板用户请直接看 [BAOTA_DEPLOY.md](BAOTA_DEPLOY.md)。
+
 ## 1. 准备
 
 - JDK 8
@@ -108,7 +110,9 @@ stat=401
 
 ## 10. 宝塔
 
-- 站点根目录指向 `/opt/xingyu-pay/frontend`，或反向代理到 `127.0.0.1:8889`
-- SSL 证书用宝塔申请
-- 不要再建第二个 Java 项目抢 8889 端口
-- 继续用 systemd 服务 `paypro`
+- 完整步骤：`docs/BAOTA_DEPLOY.md`
+- 前端目录示例：`/www/wwwroot/pay.example.com`
+- 后端目录示例：`/www/wwwroot/xingyu-pay-backend`
+- Nginx 模板：`deploy/baota/nginx-site.conf.example`
+- systemd 模板：`deploy/baota/paypro.service.example`
+- 环境变量模板：`deploy/baota/env.example`

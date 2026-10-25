@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -55,7 +56,7 @@ public class OrderController {
     private PayProConfig payProConfig;
 
     private boolean tokenEquals(String a, String b) {
-        if (a == null || b == null) {
+        if (a == null || b == null || a.trim().isEmpty() || b.trim().isEmpty()) {
             return false;
         }
         return MessageDigest.isEqual(
@@ -64,7 +65,13 @@ public class OrderController {
     }
 
     private boolean adminTokenValid(String token) {
-        return tokenEquals(token, payProConfig.getToken().getValue());
+        String configured = payProConfig.getToken() == null
+                ? null : payProConfig.getToken().getValue();
+        if (configured == null || configured.trim().length() < 32
+                || token == null || token.trim().length() < 32) {
+            return false;
+        }
+        return tokenEquals(token, configured);
     }
 
     private String reviewKey(String id) {
@@ -78,7 +85,7 @@ public class OrderController {
     @ApiOperation(value = "管理端获取支付数据列表")
     @ResponseBody
     public ResponseVO<IPage<Order>> getAdminOrderList(
-            @RequestBody GetOrderListReq req,
+            @RequestBody @Valid GetOrderListReq req,
             @RequestHeader(value = "X-Admin-Token", required = false) String adminToken,
             HttpServletResponse response) {
         if (!adminTokenValid(adminToken)) {
@@ -95,11 +102,11 @@ public class OrderController {
     @ApiOperation(value = "公开支持记录")
     @ResponseBody
     public ResponseVO<IPage<Order>> getPublicOrderList(
-            @RequestBody(required = false) GetOrderListReq req) {
+            @RequestBody(required = false) @Valid GetOrderListReq req) {
         return ResponseVO.successResponse(orderService.publicList(req));
     }
 
-    @GetMapping("/order/state/{id}")
+    @GetMapping("/order/state/{id:[0-9a-fA-F]{32}}")
     @ApiOperation(value = "获取支付状态")
     @ResponseBody
     public ResponseVO getOrderState(@PathVariable String id) {
@@ -234,6 +241,10 @@ public class OrderController {
         BigDecimal amount;
         try {
             amount = new BigDecimal(receivedAmount == null ? "" : receivedAmount.trim());
+            if (amount.scale() > 2) {
+                model.addAttribute("errorMsg", "到账金额最多保留两位小数");
+                return "error";
+            }
         } catch (Exception e) {
             model.addAttribute("errorMsg", "到账金额格式不正确");
             return "error";
@@ -342,6 +353,23 @@ public class OrderController {
     @ResponseBody
     public ResponseVO<OpenApiOrderResp> createOpenApiOrder(@RequestBody @Validated OpenApiOrderReq req) {
         try {
+            if (req.getOrderNo() == null || !req.getOrderNo().matches("[A-Za-z0-9_-]{6,64}")) {
+                throw new ApiException(ApiException.ErrorCode.INVALID_PARAM,
+                        "订单号只能包含字母、数字、下划线或短横线，长度 6-64");
+            }
+            if (req.getEmail() != null && !req.getEmail().trim().isEmpty()
+                    && !EmailUtils.checkEmail(req.getEmail())) {
+                throw new ApiException(ApiException.ErrorCode.INVALID_PARAM, "邮箱格式不正确");
+            }
+            if (req.getNotifyUrl() != null && req.getNotifyUrl().length() > 2048) {
+                throw new ApiException(ApiException.ErrorCode.INVALID_PARAM, "回调地址过长");
+            }
+            if (req.getExpireSeconds() != null
+                    && (req.getExpireSeconds() < 60 || req.getExpireSeconds() > 86400)) {
+                throw new ApiException(ApiException.ErrorCode.INVALID_PARAM,
+                        "订单有效期必须在 60-86400 秒之间");
+            }
+
             log.info("收到OpenApi订单创建请求 - 订单号: {}, 金额: {}, 支付方式: {}",
                     req.getOrderNo(), req.getAmount(), req.getPayType());
 

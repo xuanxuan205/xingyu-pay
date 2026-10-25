@@ -8,10 +8,17 @@
 - 所有 `.env`
 - `target/`、`*.jar`、`*.class`
 - `logs/`、`data/`、`*.log`、`*.pid`、`*.hprof`
-- `qr/` 下的真实收款码，只保留 `qr/README.md`
 - 旧版回滚包、基线源码、旧版 JAR
 - `deploy/security` 下的验证日志和真实服务器路径
 - 上游 README 里的真实演示域名、邮箱和个人姓名
+
+## 已包含
+
+- 前后端源码与页面
+- 全站 CSS、品牌 SVG、favicon、PWA 图标和 Open Graph 封面
+- `qr/` 下由仓库所有者决定公开的真实收款二维码
+- 宝塔部署模板：`deploy/baota/`
+- MIT License 和 NOTICE
 
 ## 敏感字符串扫描
 
@@ -20,15 +27,15 @@
 ## 发布前人工确认
 
 1. 不要把服务器上的 `.env` 复制进仓库。
-2. 不要把 `qr/` 里的真实收款码提交。
-3. 不要把 `data/`、`logs/`、`*.jar` 提交。
-4. 确认上游 PayPro 的许可证，再替换 `LICENSE`。
-5. 在 GitHub 仓库设置里开启 Secret Scanning。
+2. 不要把 `data/`、`logs/`、`*.jar` 提交。
+3. 确认 `qr/` 中的收款码确实允许公开。
+4. 在 GitHub 仓库设置里开启 Secret Scanning、Push Protection 和 Dependabot。
+5. 部署前替换所有示例域名、邮箱、手机号和密钥。
 
 ## 本地复查命令
 
 ```bash
 git status --short
 git grep -nE 'YOUR_REAL_DOMAIN|YOUR_DB_PASSWORD|YOUR_EMAIL|YOUR_PHONE' || true
-find . -name '.env' -o -name '*.jar' -o -name '*.log' -o -name '*.png' | head
+find . -name '.env' -o -name '*.jar' -o -name '*.log'
 ```

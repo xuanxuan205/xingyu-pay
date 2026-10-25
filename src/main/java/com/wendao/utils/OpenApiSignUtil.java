@@ -1,7 +1,6 @@
 package com.wendao.utils;
 
 import cn.hutool.crypto.SecureUtil;
-import cn.hutool.crypto.digest.DigestUtil;
 import com.wendao.model.req.OpenApiOrderReq;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,6 +46,10 @@ public class OpenApiSignUtil {
     }
 
     public boolean verifySign(OpenApiOrderReq req) {
+        if (req.getSign() == null || !req.getSign().trim().matches("[A-Fa-f0-9]{32}")) {
+            log.warn("OpenAPI 签名格式不正确, orderNo={}", req.getOrderNo());
+            return false;
+        }
         Map<String, Object> params = new TreeMap<>();
         params.put("orderNo", req.getOrderNo());
         params.put("amount", req.getAmount());
@@ -61,9 +64,9 @@ public class OpenApiSignUtil {
         params.put("expireSeconds", req.getExpireSeconds());
 
         String calculatedSign = generateSign(params);
-        boolean isValid = req.getSign() != null && MessageDigest.isEqual(
+        boolean isValid = MessageDigest.isEqual(
                 calculatedSign.getBytes(StandardCharsets.UTF_8),
-                req.getSign().toUpperCase().getBytes(StandardCharsets.UTF_8));
+                req.getSign().trim().toUpperCase().getBytes(StandardCharsets.UTF_8));
 
         if (!isValid) {
             log.warn("OpenAPI 签名验证失败, orderNo={}", req.getOrderNo());
@@ -85,10 +88,5 @@ public class OpenApiSignUtil {
             return false;
         }
         return true;
-    }
-
-    public static void main(String[] args) {
-
-        System.out.println(DigestUtil.md5Hex("amount=10.00&description=1&email=test@example.com&nickName=1"));
     }
 }

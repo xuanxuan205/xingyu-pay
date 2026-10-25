@@ -1,7 +1,20 @@
 server:
   port: ${SERVER_PORT:8889}
+  server-header: ""
+  error:
+    include-message: never
+    include-stacktrace: never
+    whitelabel:
+      enabled: false
+  tomcat:
+    max-http-form-post-size: 2MB
+    max-swallow-size: 2MB
 
 spring:
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: false
   profiles:
     active: ${SPRING_PROFILES_ACTIVE:local}
   mail:

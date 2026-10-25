@@ -3,6 +3,8 @@ package com.wendao.model.req;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -10,6 +12,7 @@ import java.util.Date;
 @Data
 public class OrderReq implements Serializable {
 
+    @Size(max = 255, message = "昵称过长")
     private String nickName;
 
     private Long productId;
@@ -22,6 +25,7 @@ public class OrderReq implements Serializable {
     /**
      * 描述
      */
+    @Size(max = 255, message = "附言过长")
     private String description;
 
     private Date createTime;
@@ -31,6 +35,8 @@ public class OrderReq implements Serializable {
     /**
      * 用户通知邮箱
      */
+    @Email(message = "邮箱格式不正确")
+    @Size(max = 254, message = "邮箱过长")
     private String email;
 
     /**
@@ -38,6 +44,7 @@ public class OrderReq implements Serializable {
      */
     private Integer state=0;
 
+    @Size(max = 16, message = "支付方式不合法")
     private String payType;
 
     /**
