@@ -76,7 +76,6 @@ docs/
 ├── BAOTA_DEPLOY.md       宝塔面板完整教程
 ├── DEPLOY.md             通用部署
 ├── SECURITY.md           安全说明
-├── OPEN_SOURCE_CHECK.md  开源检查清单
 └── screenshots/          README 截图
 qr/                       固定金额收款二维码
 ```
@@ -261,9 +260,7 @@ mvn clean test package
 
 ## 开源检查
 
-见 **[docs/OPEN_SOURCE_CHECK.md](docs/OPEN_SOURCE_CHECK.md)**。
-
-仓库不包含：
+发布前确认仓库不包含以下内容：
 
 ```text
 .env
