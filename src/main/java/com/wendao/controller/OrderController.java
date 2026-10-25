@@ -35,6 +35,8 @@ import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.Date;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 @Controller
 @Api(tags = "开放接口", description = "订单管理")
@@ -221,6 +223,29 @@ public class OrderController {
         model.addAttribute("reviewToken", t);
         model.addAttribute("canReview", canReview);
         return "review";
+    }
+
+    /**
+     * 旧版邮件链接兼容：GET 只换发审核 token 并跳转到审核页，绝不在 GET 中修改订单。
+     * 旧链接形如 /order/pass?id=...&token=...&myToken=...
+     */
+    @GetMapping("/order/pass")
+    public String legacyReviewLink(@RequestParam String id,
+                                   @RequestParam(value = "token", required = false) String token,
+                                   Model model) {
+        String legacyToken = null;
+        try {
+            legacyToken = redisTemplate.opsForValue().get(id);
+        } catch (Exception e) {
+            log.warn("旧审核 token 查询失败, id={}", id, e);
+        }
+        if (!tokenEquals(token, legacyToken)) {
+            model.addAttribute("errorMsg", "审核链接无效或已过期，请使用最新审核邮件中的“打开审核页”。");
+            return "error";
+        }
+        String reviewToken = UUID.randomUUID().toString().replace("-", "");
+        redisTemplate.opsForValue().set(reviewKey(id), reviewToken, 30, TimeUnit.MINUTES);
+        return "redirect:/review?id=" + id + "&t=" + reviewToken;
     }
 
     /**
