@@ -15,8 +15,8 @@ applogs/
 *.key
 *.p12
 *.jks
-qr/*
-!qr/README.md
+# QR assets are part of this repository. Replace them with your own
+# payment codes before deploying a public instance.
 frontend/static/assets/images/*.tmp
 .DS_Store
 .idea/
