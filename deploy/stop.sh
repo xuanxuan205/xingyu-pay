@@ -1,0 +1,23 @@
+#!/bin/sh
+set -eu
+
+APP_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+PID_FILE="$APP_DIR/paypro.pid"
+
+if [ ! -f "$PID_FILE" ]; then
+  echo "PID file not found: $PID_FILE"
+  exit 0
+fi
+
+PID=$(cat "$PID_FILE")
+if kill -0 "$PID" 2>/dev/null; then
+  kill "$PID"
+  sleep 2
+  if kill -0 "$PID" 2>/dev/null; then kill -9 "$PID"; fi
+  echo "Xingyu Pay stopped: PID $PID"
+else
+  echo "Process is not running: PID $PID"
+fi
+
+rm -f "$PID_FILE"
+

@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>数据统计 · 星屿支付</title>
+    <link rel="icon" href="/assets/images/favicon.svg" type="image/svg+xml">
+    <link rel="alternate icon" href="/assets/images/favicon.ico" sizes="any">
+    <link rel="apple-touch-icon" href="/assets/images/apple-touch-icon.png">
+    <link rel="stylesheet" href="/css/common.css">
+    <style>
+        .dashboard-page { min-height: 100vh; padding: 26px 16px 40px; }
+        .dashboard { max-width: 620px; margin: 0 auto; }
+        .dashboard-head { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 18px; }
+        .dashboard-head .brand-lockup img { width: 36px; height: 36px; }
+        .dashboard-head .brand-name { font-size: 1.05rem; }
+        .total-card { padding: 28px 24px; border-radius: var(--radius-lg); background: #113c34; color: #f9f4e8; text-align: center; margin-bottom: 14px; box-shadow: var(--shadow-soft); }
+        .total-card span { color: rgba(249,244,232,.58); font-size: .78rem; }
+        .total-card h1 { margin: 8px 0 0; font-family: "Iowan Old Style", "Palatino Linotype", serif; font-size: 2.5rem; line-height: 1.1; color: #e4bd68; }
+        .filter-card { display: grid; gap: 9px; padding: 15px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: var(--surface-color); margin-bottom: 14px; }
+        .filter-card select, .filter-card input { padding: 10px; border: 1px solid var(--border-color); border-radius: 8px; background: #fffdf8; color: var(--text-color); font: inherit; font-size: .86rem; }
+        .custom-range { display: flex; gap: 8px; }
+        .custom-range input { flex: 1; }
+        .list-card { overflow: hidden; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: var(--surface-color); }
+        .list-item { display: flex; justify-content: space-between; padding: 14px 17px; border-bottom: 1px solid var(--border-color); font-size: .86rem; }
+        .list-item:last-child { border: none; }
+        .channel-name { color: var(--text-muted); }
+        .channel-value { font-weight: 700; color: var(--text-color); }
+        .btn-refresh { width: 100%; margin-top: 14px; }
+    </style>
+</head>
+<body>
+<div class="dashboard-page">
+    <div class="dashboard">
+        <div class="dashboard-head">
+            <a class="brand-lockup" href="home.html">
+                <img src="/assets/images/brand-mark.svg" alt="星屿支付">
+                <span class="brand-name">星屿支付<span class="brand-en">Xingyu Pay</span></span>
+            </a>
+            <a class="btn btn-secondary" href="history.html">支持记录</a>
+        </div>
+        <div class="total-card">
+            <span>当前周期支持合计（元）</span>
+            <h1 id="amount">0.00</h1>
+        </div>
+        <div class="filter-card">
+            <select id="typeSelect" onchange="onTypeChange()">
+                <option value="0">今日统计</option>
+                <option value="6">昨天</option>
+                <option value="1">本周</option>
+                <option value="2">本月</option>
+                <option value="3">本年统计</option>
+                <option value="4">上周</option>
+                <option value="5">上月</option>
+                <option value="-1">总额累计</option>
+                <option value="-2">自定义日期范围</option>
+            </select>
+            <div id="customRange" class="custom-range" style="display:none;">
+                <input type="date" id="start" onchange="doQuery()">
+                <input type="date" id="end" onchange="doQuery()">
+            </div>
+        </div>
+        <div class="list-card">
+            <div class="list-item"><span class="channel-name">微信支付</span><span class="channel-value" id="weixin">0.00</span></div>
+            <div class="list-item"><span class="channel-name">支付宝支付</span><span class="channel-value" id="alipay">0.00</span></div>
+        </div>
+        <button class="btn btn-primary btn-refresh" onclick="doQuery()">刷新统计数据</button>
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<script>
+    function getAdminToken() {
+        var token = sessionStorage.getItem('ADMIN_TOKEN');
+        if (!token) {
+            token = window.prompt('请输入管理员 Token');
+            if (token) sessionStorage.setItem('ADMIN_TOKEN', token.trim());
+        }
+        return (token || '').trim();
+    }
+    function onTypeChange() {
+        if ($("#typeSelect").val() == "-2") $("#customRange").css("display", "flex");
+        else { $("#customRange").hide(); doQuery(); }
+    }
+    function doQuery() {
+        var token = getAdminToken();
+        if (!token) return;
+        $.ajax({
+            url: '/order/statistic',
+            method: 'POST',
+            headers: { 'X-Admin-Token': token },
+            data: {
+                type: $("#typeSelect").val(),
+                start: $("#start").val(),
+                end: $("#end").val()
+            },
+            success: function (data) {
+                if (data.code == 200) {
+                    var r = data.data;
+                    $("#amount").text(parseFloat(r.amount || 0).toFixed(2));
+                    $("#weixin").text(parseFloat(r.weixin || 0).toFixed(2));
+                    $("#alipay").text(parseFloat(r.alipay || 0).toFixed(2));
+                } else if (data.code == 401) {
+                    sessionStorage.removeItem('ADMIN_TOKEN');
+                    alert('Token 不正确，请刷新页面重新输入');
+                } else {
+                    alert(data.msg || '查询失败');
+                }
+            },
+            error: function (xhr) {
+                if (xhr.status === 401) {
+                    sessionStorage.removeItem('ADMIN_TOKEN');
+                    alert('Token 不正确，请刷新页面重新输入');
+                } else {
+                    alert('请求失败，请稍后重试');
+                }
+            }
+        });
+    }
+    $(document).ready(doQuery);
+</script>
+</body>
+</html>

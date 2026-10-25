@@ -1,0 +1,161 @@
+server:
+  port: ${SERVER_PORT:8889}
+
+spring:
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:local}
+  mail:
+    host: ${MAIL_HOST:smtp.163.com} #邮箱服务器
+    password: ${MAIL_PASSWORD:} # 请确保此为正确的授权码
+    port: ${MAIL_PORT:25}
+    properties:
+      mail:
+        smtp:
+          auth: ${MAIL_AUTH:true}
+          starttls:
+            enable: ${MAIL_STARTTLS:true}
+            required: ${MAIL_STARTTLS:true}
+          ssl:
+            enable: ${MAIL_SSL_ENABLE:false}
+            trust: ${MAIL_SSL_TRUST:smtp.163.com}  # 信任指定主机
+    username: ${MAIL_USERNAME:} #发送邮箱的账号
+
+  output:
+    ansi:
+      enabled: DETECT
+  thymeleaf:
+    cache: false
+    enabled: true
+    mode: LEGACYHTML5
+    prefix: file:${FRONTEND_DIR:./frontend}/templates/
+  resources:
+    static-locations:
+      - file:${FRONTEND_DIR:./frontend}/static/
+      - classpath:/static/
+  datasource:
+    driverClassName: com.mysql.jdbc.Driver
+    filters: stat,wall
+    initialSize: 5
+    maxActive: 20
+    maxPoolPreparedStatementPerConnectionSize: 20
+    maxWait: 60000
+    minEvictableIdleTimeMillis: 300000
+    minIdle: 5
+    password: ${DB_PASSWORD:}
+    poolPreparedStatements: true
+    testOnBorrow: false
+    testOnReturn: false
+    testWhileIdle: true
+    timeBetweenEvictionRunsMillis: 60000
+    type: com.alibaba.druid.pool.DruidDataSource
+    url: ${DB_URL:jdbc:mysql://127.0.0.1:3306/pay?useSSL=false&characterEncoding=utf-8&serverTimezone=GMT%2B8}
+    username: ${DB_USERNAME:root}
+    validationQuery: SELECT 1
+  redis:
+    database: ${REDIS_DB:1}
+    host: ${REDIS_HOST:127.0.0.1}
+    port: ${REDIS_PORT:6379}
+    password: ${REDIS_PASSWORD:}
+    pool:
+      max-active: -1
+      max-idle: 8
+      max-wait: -1
+      min-idle: 0
+    timeout: 10000
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl
+  mapper-locations: classpath*:mapper/*.xml
+  global-config:
+    db-config:
+      update-strategy: NOT_EMPTY
+      #逻辑删除字段
+      logic-delete-field: delFlag
+      #删除值
+      logic-delete-value: 1
+      #未删除值
+      logic-not-delete-value: 0
+
+paypro:
+  alipayCustomQrUrl: ${ALIPAY_CUSTOM_QR_URL:} # 支付宝自定义收款码链接
+  alipayUserId: ${ALIPAY_USER_ID:} # 支付宝用户ID
+  indexTitle: ${INDEX_TITLE:星屿支付} # 网站首页标题
+  name: ${PAYEE_NAME:星屿支付} # 支付宝免备注昵称
+  emailBrandName: ${EMAIL_BRAND_NAME:} # 邮件品牌名；留空时回退到 PAYEE_NAME
+  title: ${SITE_TITLE:星屿支付} # 邮件标题
+  site: ${SITE_URL:https://pay.example.com} # 生成邮件里操作的url地址和支付宝免备注需要
+  qr-dir: ${QR_DIR:/app/appsystems/qr}
+  mobile: ${PAYEE_MOBILE:} # 支付宝免备注需要，填写你支付宝的手机号
+  email:
+    receiver: ${MAIL_TO:}
+    sender: ${MAIL_FROM:}
+  supportMail: ${SUPPORT_MAIL:}
+  order:
+    timeoutMinutes: ${ORDER_TIMEOUT_MINUTES:30}
+  rateLimit:
+    # 防炸库缓存验证(分钟)
+    ipExpire: 2
+  token:
+    value: ${ADMIN_TOKEN:change-me}
+    expire: ${ADMIN_TOKEN_EXPIRE_DAYS:14}
+  qrCodeNum: 2
+  decrement:
+    # 固定金额二维码模式：关闭减额
+    enabled: false
+    maxCount: 0
+    step: 0.01
+  openapi:
+    secret: ${OPENAPI_SECRET:change-me}
+  products:
+    - id: 5
+      product-name: "支持 1 元"
+      money: "1.00"
+      description: "固定金额 1 元"
+      type: "CODE"
+      extend: ""
+      download-url: ""
+    - id: 1
+      product-name: "支持 5 元"
+      money: "5.00"
+      description: "固定金额 5 元"
+      type: "CODE"
+      extend: ""
+      download-url: ""
+    - id: 2
+      product-name: "支持 10 元"
+      money: "10.00"
+      description: "固定金额 10 元"
+      type: "CODE"
+      extend: ""
+      download-url: ""
+    - id: 3
+      product-name: "支持 29 元"
+      money: "29.00"
+      description: "固定金额 29 元"
+      type: "CODE"
+      extend: ""
+      download-url: ""
+    - id: 4
+      product-name: "支持 49 元"
+      money: "49.00"
+      description: "固定金额 49 元"
+      type: "CODE"
+      extend: ""
+      download-url: ""
+
+  payMethods:
+    - id: 'alipay'
+      name: '支付宝支付'
+      description: '金额已锁定，拉起支付宝付款'
+      icon: '🔵'
+      status: true
+      allow-night: false
+      use-local-qr-code: false
+    - id: 'wechat'
+      name: '微信支付'
+      description: '扫描对应金额二维码付款'
+      icon: '🟢'
+      status: true
+      allow-night: true
+      use-local-qr-code: true

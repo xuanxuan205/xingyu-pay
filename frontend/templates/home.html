@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="星屿支付，为个人创作者与小型团队提供清晰、可靠、可私有部署的收款体验。">
+    <link rel="icon" href="/assets/images/favicon.svg" type="image/svg+xml">
+    <link rel="alternate icon" href="/assets/images/favicon.ico" sizes="any">
+    <link rel="apple-touch-icon" href="/assets/images/apple-touch-icon.png">
+    <title>星屿支付 · 让每一份支持都被认真接住</title>
+    <link rel="stylesheet" href="/css/common.css">
+    <style>
+        .hero { display: grid; grid-template-columns: 1.08fr .92fr; align-items: center; gap: 64px; padding: 66px 0 74px; }
+        .hero-copy .display-title { margin: 18px 0 24px; max-width: 680px; }
+        .hero-copy .display-title span { color: var(--primary-color); }
+        .hero-copy p { max-width: 560px; color: var(--text-muted); font-size: 1.08rem; line-height: 1.95; }
+        .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 32px; }
+        .hero-note { margin-top: 18px; color: var(--text-muted); font-size: .84rem; letter-spacing: .04em; }
+        .hero-visual { position: relative; min-height: 420px; display: grid; place-items: center; }
+        .hero-visual::before { content: ""; position: absolute; width: 370px; height: 370px; border-radius: 48% 52% 58% 42%; background: linear-gradient(145deg, rgba(15,107,93,.16), rgba(184,134,47,.12)); filter: blur(1px); transform: rotate(-12deg); }
+        .pay-preview { position: relative; width: min(340px, 88%); padding: 24px; background: var(--surface-color); border: 1px solid var(--border-color); border-radius: 26px; box-shadow: 0 30px 70px rgba(55,43,24,.15); transform: rotate(2deg); }
+        .preview-top { display: flex; justify-content: space-between; align-items: center; color: var(--text-muted); font-size: .78rem; }
+        .preview-top strong { color: var(--primary-color); font-weight: 700; }
+        .preview-amount { margin: 18px 0 4px; font-family: "Iowan Old Style", "Palatino Linotype", "Noto Serif SC", serif; font-size: 2.7rem; line-height: 1; color: var(--text-color); }
+        .preview-label { color: var(--text-muted); font-size: .85rem; }
+        .preview-qr { width: 152px; height: 152px; margin: 26px auto 18px; padding: 11px; background: #fff; border: 1px solid var(--border-color); border-radius: 14px; display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
+        .preview-qr i { display: block; border-radius: 2px; background: var(--primary-color); opacity: .9; }
+        .preview-qr i:nth-child(3n), .preview-qr i:nth-child(5n) { opacity: .15; }
+        .preview-status { display: flex; align-items: center; justify-content: center; gap: 7px; font-size: .82rem; color: var(--success-color); }
+        .preview-status::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--success-color); box-shadow: 0 0 0 4px rgba(39,120,92,.12); }
+        .floating-tag { position: absolute; padding: 10px 14px; background: rgba(255,253,247,.92); border: 1px solid var(--border-color); border-radius: 999px; box-shadow: var(--shadow-soft); color: var(--text-soft); font-size: .78rem; white-space: nowrap; }
+        .tag-one { top: 48px; right: 0; }
+        .tag-two { bottom: 62px; left: 0; }
+        .trust-strip { display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--border-color); border-radius: var(--radius-lg); background: rgba(255,253,247,.58); overflow: hidden; }
+        .trust-item { padding: 26px 20px; text-align: center; border-right: 1px solid var(--border-color); }
+        .trust-item:last-child { border-right: none; }
+        .trust-item strong { display: block; font-family: "Iowan Old Style", "Palatino Linotype", "Noto Serif SC", serif; font-size: 1.55rem; color: var(--primary-color); line-height: 1.2; }
+        .trust-item span { color: var(--text-muted); font-size: .82rem; }
+        .section { padding: 88px 0 0; }
+        .section-heading { display: flex; justify-content: space-between; gap: 32px; align-items: flex-end; margin-bottom: 34px; }
+        .section-heading h2 { font-family: "Iowan Old Style", "Palatino Linotype", "Noto Serif SC", serif; font-size: clamp(1.7rem, 3vw, 2.35rem); letter-spacing: -.02em; }
+        .section-heading p { max-width: 400px; color: var(--text-muted); font-size: .95rem; }
+        .feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+        .feature-card { padding: 28px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: rgba(255,253,247,.74); transition: transform .2s ease, box-shadow .2s ease; }
+        .feature-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-soft); }
+        .feature-icon { width: 42px; height: 42px; border-radius: 12px; display: grid; place-items: center; background: rgba(15,107,93,.09); color: var(--primary-color); margin-bottom: 22px; }
+        .feature-icon svg { width: 21px; height: 21px; }
+        .feature-card h3 { font-size: 1.03rem; margin-bottom: 8px; color: var(--text-color); }
+        .feature-card p { color: var(--text-muted); font-size: .9rem; line-height: 1.8; }
+        .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; counter-reset: step; }
+        .step { position: relative; padding: 28px; border-top: 1px solid var(--border-strong); }
+        .step::before { counter-increment: step; content: "0" counter(step); display: block; color: var(--secondary-color); font-family: "Iowan Old Style", serif; font-size: 1.4rem; margin-bottom: 16px; }
+        .step h3 { margin-bottom: 8px; font-size: 1rem; }
+        .step p { color: var(--text-muted); font-size: .9rem; }
+        .cta-panel { margin-top: 86px; padding: 54px clamp(24px, 5vw, 64px); border-radius: 28px; background: #123c34; color: #f9f4e8; display: flex; align-items: center; justify-content: space-between; gap: 30px; overflow: hidden; position: relative; }
+        .cta-panel::after { content: ""; position: absolute; width: 280px; height: 280px; right: -70px; top: -120px; border: 1px solid rgba(244,239,228,.16); border-radius: 50%; box-shadow: 0 0 0 34px rgba(244,239,228,.04), 0 0 0 68px rgba(244,239,228,.03); }
+        .cta-panel h2 { font-family: "Iowan Old Style", "Palatino Linotype", "Noto Serif SC", serif; font-size: clamp(1.7rem, 3vw, 2.45rem); line-height: 1.25; }
+        .cta-panel p { color: rgba(249,244,232,.7); margin-top: 8px; font-size: .92rem; }
+        .cta-panel .btn { background: #f9f4e8; color: #123c34; flex-shrink: 0; position: relative; z-index: 1; }
+        @media (max-width: 900px) {
+            .hero { grid-template-columns: 1fr; gap: 30px; padding-top: 40px; }
+            .hero-visual { min-height: 340px; }
+            .feature-grid { grid-template-columns: repeat(2, 1fr); }
+            .trust-strip { grid-template-columns: repeat(2, 1fr); }
+            .trust-item:nth-child(2) { border-right: none; }
+            .trust-item:nth-child(-n+2) { border-bottom: 1px solid var(--border-color); }
+        }
+        @media (max-width: 640px) {
+            .hero { padding: 34px 0 54px; }
+            .section { padding-top: 64px; }
+            .section-heading { display: block; }
+            .section-heading p { margin-top: 10px; }
+            .feature-grid, .steps { grid-template-columns: 1fr; }
+            .cta-panel { flex-direction: column; align-items: flex-start; padding: 34px 24px; }
+            .floating-tag { display: none; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header class="site-header">
+        <a class="brand-lockup" href="home.html">
+            <img src="/assets/images/brand-mark.svg" alt="星屿支付">
+            <span class="brand-name">星屿支付<span class="brand-en">Xingyu Pay</span></span>
+        </a>
+        <nav class="nav-links" aria-label="主导航">
+            <a href="home.html">首页</a>
+            <a href="recharge.html">支持中心</a>
+            <a href="history.html">支持记录</a>
+            <a href="help.html">帮助中心</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="hero-copy">
+                <span class="eyebrow">独立收款 · 私密可靠</span>
+                <h1 class="display-title">让每一份支持，<br><span>都被认真接住</span></h1>
+                <p>星屿支付为个人创作者、小团队与独立项目提供轻量的收款入口。无需复杂接入，扫码即可完成支持，订单状态与到账记录清晰可查。</p>
+                <div class="hero-actions">
+                    <a class="btn btn-primary" href="recharge.html">立即体验 <span aria-hidden="true">→</span></a>
+                    <a class="btn btn-secondary" href="help.html">查看帮助</a>
+                </div>
+                <div class="hero-note">私有部署 · 数据自持 · 支付渠道直连</div>
+            </div>
+            <div class="hero-visual" aria-hidden="true">
+                <div class="pay-preview animate-float">
+                    <div class="preview-top"><span>本次支持</span><strong>安全支付</strong></div>
+                    <div class="preview-amount">¥ 5.00</div>
+                    <div class="preview-label">固定金额 · 专属收款码</div>
+                    <div class="preview-qr">
+                        <i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+                        <i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+                        <i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+                        <i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+                        <i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+                        <i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+                        <i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+                    </div>
+                    <div class="preview-status">等待支付确认</div>
+                </div>
+                <div class="floating-tag tag-one">订单实时同步</div>
+                <div class="floating-tag tag-two">每一笔都有记录</div>
+            </div>
+        </section>
+
+        <section class="trust-strip" aria-label="服务特点">
+            <div class="trust-item"><strong>3 步</strong><span>完成一次支持</span></div>
+            <div class="trust-item"><strong>2 种</strong><span>主流支付方式</span></div>
+            <div class="trust-item"><strong>7×24</strong><span>订单状态查询</span></div>
+            <div class="trust-item"><strong>0 依赖</strong><span>私有化部署</span></div>
+        </section>
+
+        <section class="section">
+            <div class="section-heading">
+                <h2>简单，但不将就</h2>
+                <p>把复杂的支付流程收在身后，把清晰、安心和体面留给每一次支持。</p>
+            </div>
+            <div class="feature-grid">
+                <article class="feature-card">
+                    <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM19 19h2v2h-2z"/></svg></div>
+                    <h3>扫码即付</h3>
+                    <p>支持支付宝与微信扫码，打开手机即可完成支持，不打断当下的使用节奏。</p>
+                </article>
+                <article class="feature-card">
+                    <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3l7 3v5c0 4.6-3 8.2-7 10-4-1.8-7-5.4-7-10V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg></div>
+                    <h3>双重校验</h3>
+                    <p>订单标识与支付备注相互校验，减少误匹配，让每一笔到账都能准确归位。</p>
+                </article>
+                <article class="feature-card">
+                    <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 19V5M4 19h16"/><path d="M8 15l3-3 3 2 4-6"/></svg></div>
+                    <h3>订单追踪</h3>
+                    <p>支付状态自动刷新，支持记录集中呈现，不必在聊天窗口里翻找每一笔凭证。</p>
+                </article>
+                <article class="feature-card">
+                    <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="7" y="2.5" width="10" height="19" rx="2"/><path d="M10 5.5h4M11 18.5h2"/></svg></div>
+                    <h3>多端适配</h3>
+                    <p>桌面、平板与手机均可顺畅浏览，页面轻量，打开即用，不依赖额外客户端。</p>
+                </article>
+                <article class="feature-card">
+                    <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 9h8M8 13h5M8 17h7"/></svg></div>
+                    <h3>私有部署</h3>
+                    <p>程序运行在自有服务器，数据与配置由自己掌握，适合长期运营的独立项目。</p>
+                </article>
+                <article class="feature-card">
+                    <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M5 20V10M12 20V4M19 20v-7"/><path d="M3 20h18"/></svg></div>
+                    <h3>清晰对账</h3>
+                    <p>金额、渠道、状态与时间一屏可见，按周期查看支持情况，运营判断更有依据。</p>
+                </article>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="section-heading">
+                <h2>一次支持，三步完成</h2>
+                <p>没有多余跳转，也没有让人犹豫的复杂表单。</p>
+            </div>
+            <div class="steps">
+                <article class="step"><h3>选择金额</h3><p>从预设固定金额中选择，金额与收款二维码一一对应。</p></article>
+                <article class="step"><h3>扫码支付</h3><p>微信加载所选金额二维码；支付宝拉起金额已锁定的付款页。</p></article>
+                <article class="step"><h3>确认结果</h3><p>页面自动查询状态，记录会保留在支持中心。</p></article>
+            </div>
+        </section>
+
+        <section class="cta-panel">
+            <div>
+                <h2>准备好开始了吗？</h2>
+                <p>从一次简单的支持开始，建立属于你的清晰收款入口。</p>
+            </div>
+            <a class="btn" href="recharge.html">进入支持中心 <span aria-hidden="true">→</span></a>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-brand">
+            <strong>星屿支付</strong>
+            <span>用心连接每一次支持</span>
+        </div>
+        <div class="footer-links">
+            <a href="help.html">帮助中心</a>
+            <a href="history.html">支持记录</a>
+            <a href="recharge.html">开始支付</a>
+        </div>
+        <div class="footer-meta">© 2026 星屿支付 · 保留所有权利</div>
+    </footer>
+</div>
+</body>
+</html>

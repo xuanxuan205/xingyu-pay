@@ -1,0 +1,144 @@
+package com.wendao.entity;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Data;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
+
+/**
+ * @author lld
+ */
+@TableName("t_order")
+@Data
+public class Order implements Serializable{
+
+    /**
+     * 唯一标识
+     */
+    @TableId(value = "id", type = IdType.AUTO)
+    private String id;
+
+    private String nickName;
+
+    private BigDecimal money;
+
+    private String userId;
+
+    /**
+     * 留言
+     */
+    private String description;
+
+    private Date createTime;
+
+    private Date updateTime;
+
+    /**
+     * 用户通知邮箱
+     */
+    private String email;
+
+    /**
+     * 显示状态 0待审核 1确认显示 2驳回 3通过不展示 4已扫码
+     */
+    private Integer state=0;
+
+    private String payType;
+
+    /**
+     * 支付标识
+     */
+    private String payNum;
+
+    /**
+     * 支付二维码标识
+     */
+    private Integer payQrNum;
+
+    /**
+     * 匹配模式: REMARK=备注匹配, DECREMENT=减额匹配
+     */
+    private String matchMode;
+
+    /**
+     * 实际支付金额(减额模式下与money不同, 备注模式下等于money)
+     */
+    private BigDecimal actualAmount;
+
+    /**
+     * 减额槽位索引(0-based, 仅DECREMENT模式使用, REMARK模式为null)
+     */
+    private Integer decrementIndex;
+
+    /**
+     * 是否自定义输入
+     */
+    private Boolean custom;
+
+    /**
+     * 支付设备是否为移动端
+     */
+    private Boolean mobile;
+
+    /**
+     * 用户支付设备信息
+     */
+    private String device;
+
+    /**
+     * 产品id
+     */
+    private Long productId;
+
+    /** 订单来源,PRODUCT来自产品表，OTHER其他 */
+    private String orderSource;
+
+    /** 通知地址 */
+    private String notifyUrl;
+
+    /** 过期时间 */
+    private Date expireTime;
+
+    @TableField(exist = false)
+    private String time;
+
+    @TableField(exist = false)
+    @JsonIgnore
+    private String passUrl;
+
+    @TableField(exist = false)
+    @JsonIgnore
+    private String backUrl;
+
+    @TableField(exist = false)
+    @JsonIgnore
+    private String editUrl;
+
+    @TableField(exist = false)
+    @JsonIgnore
+    private String delUrl;
+
+    @TableField(exist = false)
+    @JsonIgnore
+    private String closeUrl;
+
+    @TableField(exist = false)
+    @JsonIgnore
+    private String statistic;
+
+    /**
+     * 审核页链接。只放在邮件里，不返回给接口调用方。
+     */
+    @TableField(exist = false)
+    @JsonIgnore
+    private String reviewUrl;
+
+    @TableField(exist = false)
+    private String downloadUrl;
+}

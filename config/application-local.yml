@@ -1,0 +1,45 @@
+# Local, self-contained demo profile.
+# Uses H2 in MySQL compatibility mode plus the local Redis/SMTP test doubles
+# under deploy/local. Do not use this profile for real payments.
+spring:
+  datasource:
+    url: jdbc:h2:file:./data/pay;MODE=MySQL;DATABASE_TO_LOWER=TRUE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+    filters:
+    initial-size: 1
+    min-idle: 1
+    initialization-mode: always
+    schema: classpath:schema-h2.sql
+  redis:
+    host: 127.0.0.1
+    port: 6380
+    password:
+  mail:
+    host: 127.0.0.1
+    port: 1025
+    username:
+    password:
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false
+            required: false
+
+paypro:
+  site: http://127.0.0.1:8889
+  title: 星屿支付
+  indexTitle: 星屿支付
+  name: 星屿支付
+  qr-dir: ""
+  token:
+    value: CHANGE_ME_ADMIN_TOKEN
+  openapi:
+    secret: CHANGE_ME_OPENAPI_SECRET
+  email:
+    sender: noreply@example.com
+    receiver: admin@example.com
+  supportMail: support@local.test

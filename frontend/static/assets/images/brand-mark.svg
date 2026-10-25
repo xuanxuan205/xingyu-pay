@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">星屿支付品牌图标</title>
+  <desc id="desc">深墨绿圆角方章，象牙白五角星悬于不对称岛屿之上，黄铜色清算线横贯底部。</desc>
+  <defs>
+    <linearGradient id="tile" x1="64" y1="32" x2="448" y2="480" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#11483C"/>
+      <stop offset="0.55" stop-color="#0B322B"/>
+      <stop offset="1" stop-color="#061F1A"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0" cy="0" r="1" gradientTransform="translate(232 196) rotate(58) scale(188)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F7F1E3" stop-opacity="0.13"/>
+      <stop offset="1" stop-color="#F7F1E3" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="isle" x1="256" y1="318" x2="256" y2="374" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FBF6EA"/>
+      <stop offset="1" stop-color="#E4D6BC"/>
+    </linearGradient>
+    <clipPath id="starRight">
+      <rect x="256" y="96" width="108" height="200"/>
+    </clipPath>
+    <clipPath id="tileClip">
+      <rect width="512" height="512" rx="124"/>
+    </clipPath>
+  </defs>
+
+  <g clip-path="url(#tileClip)">
+    <rect width="512" height="512" fill="url(#tile)"/>
+    <circle cx="232" cy="196" r="188" fill="url(#glow)"/>
+    <rect x="26" y="26" width="460" height="460" rx="100" stroke="#F7F1E3" stroke-opacity="0.10" stroke-width="3"/>
+  </g>
+
+  <!-- 五角星：全部坐标由手工几何构造，无外部素材 -->
+  <path d="M256 100 L283.04 168.79 L356.81 173.24 L299.75 220.21 L318.31 291.76 L256 252 L193.69 291.76 L212.25 220.21 L155.19 173.24 L228.96 168.79 Z" fill="#F7F1E3"/>
+  <g clip-path="url(#starRight)">
+    <path d="M256 100 L283.04 168.79 L356.81 173.24 L299.75 220.21 L318.31 291.76 L256 252 L193.69 291.76 L212.25 220.21 L155.19 173.24 L228.96 168.79 Z" fill="#E6D9C0"/>
+  </g>
+
+  <!-- 岛屿：右偏山脊与缓坡，避免对称书本轮廓 -->
+  <path d="M116 374 C150 352 182 340 214 336 C236 333 246 320 262 314 C278 308 292 318 308 326 C340 338 372 354 398 374 Z" fill="url(#isle)"/>
+
+  <!-- 清算线：黄铜色横线，两端圆角 -->
+  <path d="M112 392 H400" stroke="#C08A2E" stroke-width="13" stroke-linecap="round"/>
+  <path d="M176 416 H336" stroke="#C08A2E" stroke-width="8" stroke-linecap="round" stroke-opacity="0.45"/>
+</svg>

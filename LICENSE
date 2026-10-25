@@ -1,0 +1,11 @@
+Copyright (c) 2026 <repository owner>
+
+LICENSE NOT SELECTED YET
+
+This repository contains a modified PayPro-derived codebase. The upstream
+project did not include a LICENSE file in the source snapshot used to build
+this repository. Do not publish this repository under MIT, Apache-2.0, GPL or
+any other license until the repository owner has confirmed the upstream
+license and replaced this file with the chosen license text.
+
+Until then, this file does not grant any license to any part of the code.

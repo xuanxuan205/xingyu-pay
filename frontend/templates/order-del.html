@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>删除订单确认 · 星屿支付</title>
+    <link rel="icon" href="/assets/images/favicon.svg" type="image/svg+xml">
+    <link rel="alternate icon" href="/assets/images/favicon.ico" sizes="any">
+    <link rel="apple-touch-icon" href="/assets/images/apple-touch-icon.png">
+    <link rel="stylesheet" href="/css/common.css">
+    <style>
+        .delete-page { min-height: 100vh; display: grid; place-items: center; padding: 22px; }
+        .delete-card { width: min(440px, 100%); padding: 32px 26px; text-align: center; }
+        .warning-icon { width: 58px; height: 58px; margin: 0 auto 17px; border-radius: 50%; display: grid; place-items: center; background: rgba(183,74,61,.09); border: 1px solid rgba(183,74,61,.16); color: var(--danger-color); font-size: 1.5rem; font-weight: 700; }
+        .delete-card h1 { font-family: "Iowan Old Style", "Palatino Linotype", "Noto Serif SC", serif; font-size: 1.4rem; margin-bottom: 8px; }
+        .delete-card p { color: var(--text-muted); font-size: .87rem; line-height: 1.8; margin-bottom: 24px; }
+        .button-group { display: grid; gap: 9px; }
+        .btn:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+    </style>
+</head>
+<body>
+<div class="delete-page">
+    <div class="surface delete-card">
+        <div class="warning-icon">!</div>
+        <h1>确认删除这笔订单？</h1>
+        <p>删除后将无法恢复。请确认已经核对订单编号，并确保该记录不再需要保留。</p>
+        <div class="button-group">
+            <button class="btn btn-danger" id="btnSubmit" onclick="submit()">确认删除</button>
+            <button class="btn btn-secondary" onclick="window.history.back()">返回上一页</button>
+        </div>
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<script>
+    function getUrlParam(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+        var r = window.location.search.substr(1).match(reg);
+        return r != null ? unescape(r[2]) : null;
+    }
+    var id = getUrlParam('id');
+    var token = getUrlParam('token');
+    function submit() {
+        var btn = $("#btnSubmit");
+        btn.attr("disabled", true).text("正在删除…");
+        $.post('/order/del', { id: id, token: token }, function (data) {
+            if (data.code == 200) {
+                window.location.href = "/success";
+            } else {
+                alert("删除失败：" + (data.msg || '请求失败'));
+                btn.attr("disabled", false).text("确认删除");
+            }
+        }).fail(function() {
+            alert("请求失败，请稍后重试");
+            btn.attr("disabled", false).text("确认删除");
+        });
+    }
+</script>
+</body>
+</html>

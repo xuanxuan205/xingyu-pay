@@ -1,0 +1,84 @@
+services:
+  mysql:
+    image: mysql:5.7
+    container_name: pay-mysql
+    restart: always
+    environment:
+      TZ: Asia/Shanghai
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-pay}
+    ports:
+      - "127.0.0.1:3306:3306"
+    volumes:
+      - ./deploy/database.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - mysql-data:/var/lib/mysql
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_general_ci
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p$$MYSQL_ROOT_PASSWORD"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
+    networks:
+      - pay-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: pay-redis
+    restart: always
+    command: ["redis-server", "--requirepass", "${REDIS_PASSWORD}"]
+    ports:
+      - "127.0.0.1:6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -a $$REDIS_PASSWORD ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - pay-network
+
+  pay:
+    build: .
+    image: xingyu-pay:latest
+    container_name: pay
+    restart: always
+    env_file:
+      - .env
+    environment:
+      TZ: Asia/Shanghai
+      SERVER_PORT: 8889
+      SPRING_PROFILES_ACTIVE: prod
+      DB_URL: "jdbc:mysql://mysql:3306/${MYSQL_DATABASE:-pay}?useSSL=false&characterEncoding=utf-8&serverTimezone=GMT%2B8"
+      DB_USERNAME: root
+      DB_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      REDIS_DB: 1
+      FRONTEND_DIR: /app/frontend
+      QR_DIR: /app/appsystems/qr
+    ports:
+      - "8889:8889"
+    volumes:
+      - ./config:/app/appsystems/config
+      - ./qr:/app/appsystems/qr
+      - ./applogs:/app/applogs
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - pay-network
+
+volumes:
+  mysql-data:
+  redis-data:
+
+networks:
+  pay-network:
+    driver: bridge

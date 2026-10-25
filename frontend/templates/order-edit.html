@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>编辑订单 · 星屿支付</title>
+    <link rel="icon" href="/assets/images/favicon.svg" type="image/svg+xml">
+    <link rel="alternate icon" href="/assets/images/favicon.ico" sizes="any">
+    <link rel="apple-touch-icon" href="/assets/images/apple-touch-icon.png">
+    <link rel="stylesheet" href="/css/common.css">
+    <style>
+        .edit-page { min-height: 100vh; padding: 30px 16px; }
+        .edit-card { width: min(560px, 100%); margin: 0 auto; overflow: hidden; }
+        .edit-header { padding: 26px 28px; background: #113c34; color: #f9f4e8; }
+        .edit-header .eyebrow { color: #e4bd68; }
+        .edit-header .eyebrow::before { background: #e4bd68; }
+        .edit-header h1 { font-family: "Iowan Old Style", "Palatino Linotype", "Noto Serif SC", serif; font-size: 1.45rem; margin-top: 9px; }
+        .edit-header p { color: rgba(249,244,232,.58); font-size: .8rem; margin-top: 5px; }
+        .form-body { padding: 26px 28px 30px; }
+        .fake-banner { display: none; padding: 9px 12px; margin-bottom: 18px; border-radius: 8px; background: rgba(183,74,61,.08); border: 1px solid rgba(183,74,61,.16); color: var(--danger-color); font-size: .78rem; text-align: center; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group.full { grid-column: 1 / -1; }
+        .form-group label { display: block; color: var(--text-muted); font-size: .76rem; margin-bottom: 6px; }
+        .form-group input { width: 100%; padding: 11px 12px; border: 1px solid var(--border-color); border-radius: 9px; background: #fffdf8; color: var(--text-color); font: inherit; font-size: .88rem; }
+        .form-group input:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(15,107,93,.09); }
+        .form-group input:disabled { background: var(--surface-soft); color: var(--text-muted); cursor: not-allowed; }
+        .btn-submit { width: 100%; margin-top: 8px; }
+        @media (max-width: 560px) { .form-grid { grid-template-columns: 1fr; } .form-group.full { grid-column: auto; } .edit-header, .form-body { padding-left: 21px; padding-right: 21px; } }
+    </style>
+</head>
+<body>
+<div class="edit-page">
+    <div class="surface edit-card">
+        <div class="edit-header">
+            <span class="eyebrow">Order Console</span>
+            <h1>编辑订单信息</h1>
+            <p>修改订单记录，请谨慎操作。</p>
+        </div>
+        <form class="form-body" id="editForm">
+            <input type="hidden" id="id">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>用户昵称</label>
+                    <input type="text" id="nickName" maxlength="255">
+                </div>
+                <div class="form-group">
+                    <label>支持金额（只读）</label>
+                    <input type="text" id="money" disabled>
+                </div>
+                <div class="form-group">
+                    <label>支付方式（只读）</label>
+                    <input type="text" id="payType" disabled>
+                </div>
+                <div class="form-group">
+                    <label>支付标识号（只读）</label>
+                    <input type="text" id="payNum" disabled>
+                </div>
+                <div class="form-group full">
+                    <label>支付时间（只读）</label>
+                    <input type="text" id="time" disabled>
+                </div>
+                <div class="form-group full">
+                    <label>订单附言</label>
+                    <input type="text" id="description" maxlength="255">
+                </div>
+                <div class="form-group">
+                    <label>通知邮箱</label>
+                    <input type="email" id="email" maxlength="255">
+                </div>
+                <div class="form-group">
+                    <label>当前状态（只读）</label>
+                    <input type="text" id="state" disabled>
+                </div>
+            </div>
+            <button type="button" class="btn btn-primary btn-submit" onclick="confirmUpdate()">保存修改</button>
+        </form>
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<script>
+    function getUrlParam(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+        var r = window.location.search.substr(1).match(reg);
+        return r != null ? unescape(r[2]) : null;
+    }
+    var id = getUrlParam('id');
+    var token = getUrlParam('token');
+    $.get('/order/' + id, { token: token }, function (data) {
+        if (data.code == 200) {
+            var res = data.data;
+            $("#id").val(id);
+            $("#nickName").val(res.nickName);
+            $("#money").val(res.money);
+            $("#payType").val(res.payType);
+            $("#payNum").val(res.payNum);
+            $("#description").val(res.description);
+            $("#email").val(res.email);
+            $("#time").val(res.createTime || res.time || '');
+            var states = { 0:'待审核', 1:'审核通过', 2:'已驳回', 4:'已扫码', 5:'已过期' };
+            $("#state").val(states[res.state] || '其他');
+        }
+    });
+    function confirmUpdate() { if (confirm("确定保存本次修改吗？")) submitForm(); }
+    function submitForm() {
+        $.post('/order/edit', {
+            id: id, token: token,
+            nickName: $("#nickName").val(),
+            description: $("#description").val(),
+            email: $("#email").val()
+        }, function (data) {
+            if (data.code == 200) { alert("修改成功"); location.reload(); }
+            else alert("错误：" + (data.msg || '保存失败'));
+        });
+    }
+</script>
+</body>
+</html>

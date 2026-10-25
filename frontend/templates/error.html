@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="星屿支付操作提示">
+    <title>操作未完成 · 星屿支付</title>
+    <link rel="icon" href="/assets/images/favicon.svg" type="image/svg+xml">
+    <link rel="alternate icon" href="/assets/images/favicon.ico" sizes="any">
+    <link rel="apple-touch-icon" href="/assets/images/apple-touch-icon.png">
+    <link rel="stylesheet" href="/css/common.css">
+    <style>
+        .result-page { min-height: 100vh; display: grid; place-items: center; padding: 24px; }
+        .result-card { width: min(480px, 100%); padding: 42px 30px; text-align: center; }
+        .result-icon { width: 62px; height: 62px; margin: 0 auto 18px; border-radius: 50%; display: grid; place-items: center; color: var(--danger-color); background: rgba(183,74,61,.09); border: 1px solid rgba(183,74,61,.18); font-size: 1.6rem; }
+        .result-card h1 { font-family: "Iowan Old Style", "Palatino Linotype", "Noto Serif SC", serif; font-size: 1.7rem; margin-bottom: 8px; }
+        .result-card p { color: var(--text-muted); font-size: .9rem; margin-bottom: 22px; }
+        .error-message { padding: 10px 12px; border-radius: 9px; background: var(--surface-soft); border: 1px solid var(--border-color); color: var(--text-soft); font-size: .84rem; margin-bottom: 20px; word-break: break-word; }
+    </style>
+</head>
+<body>
+<div class="result-page">
+    <div class="surface result-card">
+        <div class="result-icon">!</div>
+        <h1>操作未完成</h1>
+        <p>请检查链接是否有效，或返回首页重新开始。</p>
+        <div class="error-message" th:text="${errorMsg}">处理数据出错</div>
+        <a class="btn btn-primary" href="/home.html">返回首页</a>
+    </div>
+</div>
+</body>
+</html>

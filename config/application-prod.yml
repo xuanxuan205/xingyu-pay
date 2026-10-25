@@ -1,0 +1,158 @@
+# ==========================================
+# 星屿支付 生产环境配置
+# 请根据实际情况修改下方配置后执行 ./install.sh
+# ==========================================
+
+# ---- Spring Mail 邮件发送配置（必改） ----
+spring:
+  thymeleaf:
+    # 前端模板单独部署，修改页面后无需重新打包后端
+    cache: false
+    enabled: true
+    mode: LEGACYHTML5
+    prefix: file:${FRONTEND_DIR:/opt/xingyu-pay/frontend}/templates/
+  resources:
+    static-locations:
+      - file:${FRONTEND_DIR:/opt/xingyu-pay/frontend}/static/
+      - classpath:/static/
+  mail:
+    host: ${MAIL_HOST:smtp.163.com}           # SMTP 服务器地址
+    port: ${MAIL_PORT:25}                    # SMTP 端口（25/465/587）
+    username: ${MAIL_USERNAME:}              # 发件邮箱账号
+    password: ${MAIL_PASSWORD:}              # 邮箱授权码（非登录密码）
+    properties:
+      mail:
+        smtp:
+          auth: ${MAIL_AUTH:true}
+          starttls:
+            enable: ${MAIL_STARTTLS:true}
+            required: ${MAIL_STARTTLS:true}
+          ssl:
+            enable: ${MAIL_SSL_ENABLE:false}
+            trust: ${MAIL_SSL_TRUST:smtp.163.com}
+
+paypro:
+  # ---- 必改项 ----
+  # 站点访问地址（改为你的域名或服务器IP）
+  site: ${SITE_URL:https://pay.example.com}
+  # 容器内固定路径；本地运行可覆盖为空以使用内置二维码
+  qr-dir: ${QR_DIR:/app/appsystems/qr}
+
+  # ---- 支付宝配置 ----
+  # 支付宝用户ID（用于收款）改成你自己的
+  alipayUserId: ${ALIPAY_USER_ID:}
+  # 支付宝自定义收款码链接 改成你自己的
+  alipayCustomQrUrl: ${ALIPAY_CUSTOM_QR_URL:}
+
+  # ---- 站点信息 ----
+  # 网站标题（浏览器标签栏） 可改可不改
+  title: ${SITE_TITLE:星屿支付}
+  # 首页标题 可改可不改
+  indexTitle: ${INDEX_TITLE:星屿支付}
+  # 收款人姓名 改成你自己的
+  name: ${PAYEE_NAME:星屿支付}
+  # 邮件品牌名；留空时回退到 PAYEE_NAME
+  emailBrandName: ${EMAIL_BRAND_NAME:}
+  # 联系电话 可改可不改
+  mobile: ${PAYEE_MOBILE:}
+
+  # ---- 邮箱配置 ----
+  email:
+    # 接收通知的邮箱 改成你自己的
+    receiver: ${MAIL_TO:}
+    # 发件邮箱 改成你自己的
+    sender: ${MAIL_FROM:}
+  # 支持邮箱（页面展示） 改成你自己的
+  supportMail: ${SUPPORT_MAIL:}
+
+  # ---- 限流配置 ----
+  rateLimit:
+    # IP访问间隔（分钟），防刷
+    ipExpire: ${RATE_LIMIT_MINUTES:1}
+
+  # ---- Token配置 ----
+  token:
+    # 加密密钥（务必修改为随机字符串）
+    value: ${ADMIN_TOKEN:change-me}
+    # Token过期天数
+    expire: ${ADMIN_TOKEN_EXPIRE_DAYS:14}
+
+  # ---- 开放API配置 ----
+  openapi:
+    # OPEN API签名密钥（务必修改）
+    secret: ${OPENAPI_SECRET:change-me}
+
+  # ---- 二维码配置 ----
+  # 每个金额的二维码数量
+  qrCodeNum: 2
+
+  # ---- 订单配置 ----
+  order:
+    timeoutMinutes: ${ORDER_TIMEOUT_MINUTES:30}
+
+  # ---- 减额匹配配置 ----
+  decrement:
+    # 固定金额二维码模式：关闭减额，订单金额必须与所选商品完全一致
+    enabled: false
+    maxCount: 0
+    step: 0.01
+
+  # ---- 产品配置 ----
+  # 所有产品在此定义，修改后重启生效。
+  # 金额必须与 QR_DIR/wechat/{金额}/1.png 或 2.png 对应。
+  products:
+    - id: 5
+      product-name: "支持 1 元"
+      money: "1.00"
+      description: "固定金额 1 元"
+      type: "CODE"
+      extend: ""
+      download-url: ""
+    - id: 1
+      product-name: "支持 5 元"
+      money: "5.00"
+      description: "固定金额 5 元"
+      type: "CODE"
+      extend: ""
+      download-url: ""
+    - id: 2
+      product-name: "支持 10 元"
+      money: "10.00"
+      description: "固定金额 10 元"
+      type: "CODE"
+      extend: ""
+      download-url: ""
+    - id: 3
+      product-name: "支持 29 元"
+      money: "29.00"
+      description: "固定金额 29 元"
+      type: "CODE"
+      extend: ""
+      download-url: ""
+    - id: 4
+      product-name: "支持 49 元"
+      money: "49.00"
+      description: "固定金额 49 元"
+      type: "CODE"
+      extend: ""
+      download-url: ""
+
+  # ---- 支付方式 ----
+  # 只保留支付宝支付与微信支付。
+  # 微信使用 QR_DIR/wechat/{金额}/{1|2}.png 本地金额二维码。
+  # 支付宝使用 openAlipay 金额锁定转账页。
+  payMethods:
+    - id: 'alipay'
+      name: '支付宝支付'
+      description: '金额已锁定，拉起支付宝付款'
+      icon: '🔵'
+      status: true
+      allow-night: false
+      use-local-qr-code: false
+    - id: 'wechat'
+      name: '微信支付'
+      description: '扫描对应金额二维码付款'
+      icon: '🟢'
+      status: true
+      allow-night: true
+      use-local-qr-code: true

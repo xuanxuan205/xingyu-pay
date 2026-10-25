@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="t" x1="8" y1="4" x2="56" y2="60" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#11483C"/>
+      <stop offset="0.55" stop-color="#0B322B"/>
+      <stop offset="1" stop-color="#061F1A"/>
+    </linearGradient>
+    <clipPath id="c"><rect width="64" height="64" rx="15.5"/></clipPath>
+    <clipPath id="sr"><rect x="256" y="96" width="108" height="200"/></clipPath>
+  </defs>
+  <g clip-path="url(#c)">
+    <rect width="64" height="64" fill="url(#t)"/>
+    <g transform="translate(32 25.75) scale(0.125) translate(-256 -206)">
+      <path d="M256 100 L283.04 168.79 L356.81 173.24 L299.75 220.21 L318.31 291.76 L256 252 L193.69 291.76 L212.25 220.21 L155.19 173.24 L228.96 168.79 Z" fill="#F7F1E3"/>
+      <g clip-path="url(#sr)">
+        <path d="M256 100 L283.04 168.79 L356.81 173.24 L299.75 220.21 L318.31 291.76 L256 252 L193.69 291.76 L212.25 220.21 L155.19 173.24 L228.96 168.79 Z" fill="#E6D9C0"/>
+      </g>
+      <path d="M116 374 C150 352 182 340 214 336 C236 333 246 320 262 314 C278 308 292 318 308 326 C340 338 372 354 398 374 Z" fill="#F7F1E3"/>
+      <path d="M112 392 H400" stroke="#C08A2E" stroke-width="15" stroke-linecap="round"/>
+    </g>
+  </g>
+</svg>

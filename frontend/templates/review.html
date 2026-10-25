@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="robots" content="noindex,nofollow">
+    <title>订单审核 · 星屿支付</title>
+    <link rel="icon" href="/assets/images/favicon.svg" type="image/svg+xml">
+    <link rel="alternate icon" href="/assets/images/favicon.ico" sizes="any">
+    <link rel="apple-touch-icon" href="/assets/images/apple-touch-icon.png">
+    <link rel="stylesheet" href="/css/common.css">
+    <style>
+        .review-page { min-height: 100vh; padding: 28px 16px 40px; }
+        .review-card { width: min(600px, 100%); margin: 0 auto; overflow: hidden; }
+        .review-head { padding: 26px 28px; background: #113c34; color: #f9f4e8; }
+        .review-head .eyebrow { color: #e4bd68; }
+        .review-head h1 { font-family: "Iowan Old Style", "Palatino Linotype", "Noto Serif SC", serif; font-size: 1.45rem; margin-top: 9px; }
+        .review-head p { color: rgba(249,244,232,.62); font-size: .8rem; margin-top: 6px; line-height: 1.7; }
+        .review-body { padding: 24px 28px 30px; }
+        .amount-box { padding: 20px; border-radius: 15px; background: #0f6b5d; color: #f7f2e7; text-align: center; margin-bottom: 18px; }
+        .amount-box .label { font-size: .72rem; letter-spacing: .16em; color: #c4ded3; }
+        .amount-box .value { margin-top: 5px; font-family: Georgia, serif; font-size: 2.6rem; line-height: 1.1; color: #f0cb78; font-weight: 700; }
+        .detail-table { width: 100%; border-collapse: collapse; background: #faf5ea; border: 1px solid var(--border-color); border-radius: 13px; overflow: hidden; margin-bottom: 18px; }
+        .detail-table td { padding: 11px 15px; border-bottom: 1px solid var(--border-color); font-size: .86rem; line-height: 1.6; }
+        .detail-table tr:last-child td { border-bottom: none; }
+        .detail-table td:first-child { color: var(--text-muted); width: 35%; }
+        .detail-table td:last-child { text-align: right; word-break: break-all; }
+        .warn { padding: 12px 14px; border-left: 3px solid #b8862f; background: #f6efdf; color: #65736b; font-size: .78rem; line-height: 1.8; margin-bottom: 18px; }
+        .review-form { display: grid; gap: 10px; margin-bottom: 14px; }
+        .review-form label { color: var(--text-muted); font-size: .78rem; }
+        .review-form input { width: 100%; padding: 12px 13px; border: 1px solid var(--border-color); border-radius: 9px; background: #fffdf8; color: var(--text-color); font: inherit; font-size: .95rem; }
+        .review-form input:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(15,107,93,.09); }
+        .btn-danger-outline { width: 100%; padding: 12px 14px; border: 1px solid #eccbc5; border-radius: 9px; background: #f8eae6; color: #b74a3d; font: inherit; font-size: .86rem; font-weight: 700; cursor: pointer; }
+        .done-box { padding: 18px; border-radius: 12px; background: var(--surface-soft); border: 1px solid var(--border-color); color: var(--text-muted); font-size: .86rem; line-height: 1.8; text-align: center; }
+        @media (max-width: 560px) { .review-head, .review-body { padding-left: 20px; padding-right: 20px; } }
+    </style>
+</head>
+<body>
+<div class="review-page">
+    <div class="surface review-card">
+        <div class="review-head">
+            <span class="eyebrow">Admin Review</span>
+            <h1>订单审核</h1>
+            <p>先核对支付宝/微信的实际到账金额和支付标识，再决定通过或驳回。</p>
+        </div>
+        <div class="review-body">
+            <div class="amount-box">
+                <div class="label">订单金额</div>
+                <div class="value">￥<span th:text="${order.money}">0.00</span></div>
+            </div>
+
+            <table class="detail-table">
+                <tr>
+                    <td>订单编号</td>
+                    <td th:text="${order.id}">-</td>
+                </tr>
+                <tr>
+                    <td>支付方式</td>
+                    <td th:text="${order.payType}">-</td>
+                </tr>
+                <tr>
+                    <td>支付标识号</td>
+                    <td th:text="${order.payNum}">-</td>
+                </tr>
+                <tr>
+                    <td>用户昵称</td>
+                    <td th:text="${order.nickName}">-</td>
+                </tr>
+                <tr>
+                    <td>通知邮箱</td>
+                    <td th:text="${order.email}">-</td>
+                </tr>
+                <tr>
+                    <td>订单附言</td>
+                    <td th:text="${order.description}">-</td>
+                </tr>
+            </table>
+
+            <div class="warn">
+                审核页只展示订单，不会自动通过。通过时必须输入实际收到的金额；金额与订单不一致会直接拒绝。
+            </div>
+
+            <div th:if="${canReview}">
+                <form class="review-form" method="post" action="/order/pass" autocomplete="off">
+                    <input type="hidden" name="id" th:value="${order.id}">
+                    <input type="hidden" name="t" th:value="${reviewToken}">
+                    <label for="receivedAmount">实际到账金额（元）</label>
+                    <input id="receivedAmount" name="receivedAmount" type="number"
+                           step="0.01" min="0.01" inputmode="decimal"
+                           placeholder="输入实际到账金额，例如 5.00" required>
+                    <button class="btn btn-primary" type="submit">我已核对到账，确认通过</button>
+                </form>
+
+                <form method="post" action="/order/back" autocomplete="off"
+                      onsubmit="return confirm('确定驳回这笔订单？')">
+                    <input type="hidden" name="id" th:value="${order.id}">
+                    <input type="hidden" name="t" th:value="${reviewToken}">
+                    <button class="btn-danger-outline" type="submit">驳回这笔订单</button>
+                </form>
+            </div>
+
+            <div th:unless="${canReview}" class="done-box">
+                这笔订单已经处理过，状态不允许再次审核。
+            </div>
+
+            <div style="margin-top:18px;text-align:center;">
+                <a class="btn btn-secondary" href="/home.html">返回首页</a>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

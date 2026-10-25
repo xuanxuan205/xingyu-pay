@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="星屿支付，正在进入首页。">
+    <meta http-equiv="refresh" content="0;url=home.html">
+    <link rel="canonical" href="home.html">
+    <link rel="icon" href="/assets/images/favicon.svg" type="image/svg+xml">
+    <link rel="alternate icon" href="/assets/images/favicon.ico" sizes="any">
+    <link rel="apple-touch-icon" href="/assets/images/apple-touch-icon.png">
+    <title>星屿支付 · 正在进入</title>
+    <link rel="stylesheet" href="/css/common.css">
+    <style>
+        .redirect-page { min-height: 100vh; display: grid; place-items: center; padding: 28px; }
+        .redirect-card { width: min(430px, 100%); padding: 44px 32px; text-align: center; }
+        .redirect-card img { width: 58px; height: 58px; margin-bottom: 20px; }
+        .redirect-card h1 { font-family: "Iowan Old Style", "Palatino Linotype", "Noto Serif SC", serif; font-size: 1.7rem; letter-spacing: .08em; }
+        .redirect-card p { color: var(--text-muted); margin-top: 8px; font-size: .9rem; }
+        .loader { width: 34px; height: 34px; margin: 28px auto 18px; border: 2px solid var(--border-color); border-top-color: var(--primary-color); border-radius: 50%; animation: spin .9s linear infinite; }
+        .redirect-links { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-top: 24px; }
+    </style>
+</head>
+<body>
+<div class="redirect-page">
+    <div class="surface redirect-card">
+        <img src="/assets/images/brand-mark.svg" alt="星屿支付">
+        <h1>星屿支付</h1>
+        <p>正在进入首页，请稍候</p>
+        <div class="loader"></div>
+        <div class="redirect-links">
+            <a href="home.html" class="btn btn-primary">立即前往</a>
+            <a href="recharge.html" class="btn btn-secondary">直接支付</a>
+        </div>
+    </div>
+</div>
+<noscript><p style="text-align:center;margin-top:20px;color:#6d7c74;">请手动前往 <a href="home.html">首页</a></p></noscript>
+<script>setTimeout(function(){ window.location.href = 'home.html'; }, 100);</script>
+</body>
+</html>

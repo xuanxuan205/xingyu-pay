@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>星屿支付 · 支付宝付款</title>
+    <link rel="icon" href="/assets/images/favicon.svg" type="image/svg+xml">
+    <link rel="alternate icon" href="/assets/images/favicon.ico" sizes="any">
+    <link rel="apple-touch-icon" href="/assets/images/apple-touch-icon.png">
+    <link rel="stylesheet" href="https://gw.alipayobjects.com/as/g/antui/antui/10.1.32/dpl/antui.css"/>
+    <link rel="stylesheet" href="https://gw.alipayobjects.com/as/g/antui/antui/10.1.32/??dpl/widget/message.css,dpl/icon/message.css,dpl/widget/search.css"/>
+    <link rel="stylesheet" href="https://gw.alipayobjects.com/as/g/antui/antui/10.1.32/dpl/widget/notice.css">
+    <link rel="stylesheet" href="https://gw.alipayobjects.com/as/g/antui/antui/10.1.32/dpl/widget/tips.css">
+    <link rel="stylesheet" href="https://gw.alipayobjects.com/as/g/antui/antui/10.1.32/dpl/widget/dialog.css">
+    <script src="https://gw.alipayobjects.com/as/g/h5-lib/alipayjsapi/3.1.1/alipayjsapi.min.js"></script>
+    <script src="https://gw.alipayobjects.com/as/g/antui/antui/10.1.32/antui.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/vue/3.3.4/vue.global.min.js"></script>
+    <script src="/assets/js/api-config.js"></script>
+    <script src="/assets/js/http-util.js"></script>
+    <style>
+        * { box-sizing: border-box; }
+        body { margin: 0; background: #f4efe4; color: #172722; font-family: "PingFang SC", "Microsoft YaHei", system-ui, sans-serif; }
+        .brand-bar { padding: 18px 18px 12px; display: flex; align-items: center; gap: 9px; }
+        .brand-bar img { width: 32px; height: 32px; }
+        .brand-bar strong { font-family: "Iowan Old Style", "Palatino Linotype", "Noto Serif SC", serif; font-size: 18px; letter-spacing: .08em; }
+        .brand-bar span { color: #7b877f; font-size: 10px; letter-spacing: .12em; margin-left: auto; }
+        .pay-card { margin: 8px 15px 18px; padding: 22px 18px; background: #fffdf7; border: 1px solid #ddd2bf; border-radius: 18px; text-align: center; box-shadow: 0 12px 35px rgba(55,43,24,.07); }
+        .pay-card .kicker { color: #b8862f; font-size: 11px; letter-spacing: .18em; }
+        .pay-card h1 { margin: 8px 0 5px; font-family: "Iowan Old Style", "Palatino Linotype", "Noto Serif SC", serif; font-size: 21px; font-weight: 700; }
+        .pay-card .amount { color: #0f6b5d; font-family: "Iowan Old Style", "Palatino Linotype", serif; font-size: 34px; line-height: 1.2; margin: 8px 0; }
+        .pay-card .meta { color: #6d7c74; font-size: 12px; line-height: 1.8; }
+        .pay-card .meta strong { color: #172722; font-weight: 600; }
+        .actions { margin-top: 16px; display: grid; gap: 8px; }
+        .btn-main, .btn-sub { width: 100%; border: none; border-radius: 10px; padding: 13px 16px; font-size: 14px; font-weight: 700; font-family: inherit; cursor: pointer; }
+        .btn-main { background: #0f6b5d; color: #fffdf7; }
+        .btn-sub { background: #faf5ea; color: #31453d; border: 1px solid #ddd2bf; }
+        .status-box { text-align: center; margin: 0 15px 18px; padding: 14px; color: #6d7c74; font-size: 13px; }
+        .status-box.success { color: #27785c; }
+        .status-box.failed { color: #b74a3d; }
+        .loader { display: inline-block; width: 18px; height: 18px; border: 2px solid #ddd2bf; border-top-color: #0f6b5d; border-radius: 50%; animation: spin .8s linear infinite; vertical-align: -3px; margin-right: 7px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .am-notice { background: #faf5ea; border-color: #ddd2bf; color: #6d7c74; }
+        .am-notice-content { color: #6d7c74; font-size: 12px; }
+        .am-button.blue { background: #0f6b5d; border-color: #0f6b5d; }
+        .am-button.white { color: #31453d; border-color: #ddd2bf; }
+    </style>
+</head>
+<body>
+<div id="app">
+    <div class="brand-bar">
+        <img src="/assets/images/brand-mark.svg" alt="">
+        <strong>星屿支付</strong>
+        <span>XINGYU PAY</span>
+    </div>
+
+    <div v-if="showAlert" class="am-notice" role="alert" style="margin:0 15px 10px;">
+        <div class="am-notice-content">部分支付宝版本可能无法自动跳转，请使用下方按钮手动继续。</div>
+        <div class="am-notice-operation"><a @click="closeAlert" class="am-notice-close" role="button"></a></div>
+    </div>
+
+    <section class="pay-card">
+        <div class="kicker">SECURE CHECKOUT</div>
+        <h1>支付宝付款</h1>
+        <div class="amount">￥{{ paymentData.money }}</div>
+        <div class="meta">订单号：<strong>{{ paymentData.orderId }}</strong></div>
+        <div class="meta">支付标识：<strong>{{ paymentData.orderNum }}</strong></div>
+        <div class="meta">金额已锁定，请在支付宝页面直接付款，请勿修改金额或收款人。</div>
+        <div class="actions">
+            <button class="btn-main" @click="showAction">立即支付</button>
+            <button class="btn-sub" @click="returnApp">取消并返回</button>
+        </div>
+    </section>
+
+    <div class="status-box" :class="paymentStatus">
+        <span v-if="paymentStatus === 'waiting'" class="loader"></span>{{ statusMessage }}
+        <div style="font-size:11px;margin-top:5px;opacity:.72;">{{ statusSubMessage }}</div>
+    </div>
+
+    <script th:inline="javascript">
+        const { createApp } = Vue;
+        createApp({
+            data() {
+                return {
+                    showAlert: true,
+                    paymentData: {
+                        money: [[${payMoney}]],
+                        orderNum: [[${payNum}]],
+                        orderId: [[${orderId}]]
+                    },
+                    paymentStatus: 'waiting',
+                    config: {
+                        alipayUserId: [[${alipayUserId}]]
+                    }
+                };
+            },
+            computed: {
+                statusMessage() {
+                    return ({ waiting: '正在准备支付页面', failed: '未能自动跳转', success: '支付已完成' })[this.paymentStatus] || '处理中';
+                },
+                statusSubMessage() {
+                    return ({ waiting: '请稍候，或点击上方按钮手动继续', failed: '请点击「立即支付」重试', success: '感谢你的支持' })[this.paymentStatus] || '';
+                }
+            },
+            mounted() { this.initApp(); },
+            methods: {
+                initApp() {
+                    this.checkAlipayEnvironment();
+                    this.initAlipayJSBridge();
+                },
+                checkAlipayEnvironment() {
+                    if (window.navigator.userAgent.toLowerCase().indexOf('alipay') < 0) this.paymentStatus = 'failed';
+                },
+                initAlipayJSBridge() {
+                    const self = this;
+                    function ready(callback) {
+                        if (window.AlipayJSBridge) callback && callback();
+                        else document.addEventListener('AlipayJSBridgeReady', callback, false);
+                    }
+                    ready(function() {
+                        if (typeof AlipayJSBridge !== 'undefined') {
+                            AlipayJSBridge.call('setTitle', { title: '星屿支付' });
+                            self.autoJumpToPay();
+                        }
+                    });
+                },
+                autoJumpToPay() {
+                    location.href = this.generateScanUrl();
+                },
+                generateScanUrl() {
+                    const bizData = { s: 'money', u: this.config.alipayUserId, a: this.paymentData.money, m: this.paymentData.orderNum };
+                    return 'alipays://platformapi/startapp?appId=20000123&actionType=scan&biz_data=' + encodeURIComponent(JSON.stringify(bizData));
+                },
+                showAction() {
+                    if (typeof AlipayJSBridge === 'undefined') {
+                        alert('支付宝环境尚未准备好，请稍后重试');
+                        return;
+                    }
+                    this.autoJumpToPay();
+                },
+                returnApp() {
+                    if (typeof AlipayJSBridge !== 'undefined') AlipayJSBridge.call('exitApp');
+                    else history.back() || (location.href = '/');
+                },
+                closeAlert() { this.showAlert = false; }
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>

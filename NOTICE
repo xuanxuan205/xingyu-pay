@@ -1,0 +1,12 @@
+NOTICE
+
+This repository is a security-hardened derivative of PayPro / codewendao.
+
+The source workspace used to build this snapshot did not contain an upstream
+LICENSE file. Before publishing this repository, confirm that you have the
+right to redistribute the upstream code and select a license compatible with
+that right.
+
+The security hardening changes in this snapshot are provided by the repository
+owner. No upstream trademark, payment account, domain, email address, phone
+number, QR code or credential is granted by this repository.

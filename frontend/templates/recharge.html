@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="星屿支付支持中心，选择金额与支付方式，快速完成本次支持。">
+    <link rel="icon" href="/assets/images/favicon.svg" type="image/svg+xml">
+    <link rel="alternate icon" href="/assets/images/favicon.ico" sizes="any">
+    <link rel="apple-touch-icon" href="/assets/images/apple-touch-icon.png">
+    <title>支持中心 · 星屿支付</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/vue/3.3.4/vue.global.min.js"></script>
+    <link rel="stylesheet" href="/css/common.css">
+    <script src="/assets/js/api-config.js"></script>
+    <script src="/assets/js/http-util.js"></script>
+    <style>
+        .page-wrap { padding: 36px 0 44px; }
+        .page-intro { display: flex; align-items: flex-end; justify-content: space-between; gap: 30px; margin: 42px 0 34px; }
+        .page-intro h1 { margin: 14px 0 10px; }
+        .page-intro p { color: var(--text-muted); font-size: 1rem; }
+        .support-layout { display: grid; grid-template-columns: 1.14fr .86fr; gap: 22px; align-items: start; }
+        .panel { padding: 30px; }
+        .section-label { display: flex; align-items: baseline; justify-content: space-between; gap: 18px; margin-bottom: 18px; }
+        .section-label h2 { font-family: "Iowan Old Style", "Palatino Linotype", "Noto Serif SC", serif; font-size: 1.22rem; font-weight: 700; }
+        .section-label span { color: var(--text-muted); font-size: .78rem; }
+        .amounts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 18px; }
+        .amount { min-height: 102px; padding: 18px 12px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: var(--surface-soft); cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; transition: border-color .2s ease, background .2s ease, transform .2s ease; }
+        .amount:hover { transform: translateY(-2px); border-color: var(--primary-color); }
+        .amount.active { border-color: var(--primary-color); background: rgba(15,107,93,.07); box-shadow: inset 0 0 0 1px var(--primary-color); }
+        .amount strong { color: var(--text-color); font-size: 1.2rem; font-weight: 700; }
+        .amount small { color: var(--text-muted); font-size: .76rem; text-align: center; }
+        .input, .field input, .field textarea {
+            width: 100%;
+            padding: 13px 15px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-color);
+            background: #fffdf8;
+            color: var(--text-color);
+            font: inherit;
+            font-size: .94rem;
+            transition: border-color .2s ease, box-shadow .2s ease;
+        }
+        .input:focus, .field input:focus, .field textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(15,107,93,.09);
+        }
+        .amount-note { margin: -4px 0 26px; color: var(--text-muted); font-size: .8rem; line-height: 1.7; }
+        .methods { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 26px; }
+        .method { padding: 17px 15px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: var(--surface-soft); cursor: pointer; transition: .2s ease; }
+        .method:hover { border-color: var(--primary-color); }
+        .method.active { border-color: var(--primary-color); background: rgba(15,107,93,.07); box-shadow: inset 0 0 0 1px var(--primary-color); }
+        .method.disabled { opacity: .45; cursor: not-allowed; }
+        .method-header { display: flex; gap: 11px; align-items: flex-start; }
+        .method-icon { width: 31px; height: 31px; flex-shrink: 0; display: grid; place-items: center; border-radius: 9px; background: #fffdf8; border: 1px solid var(--border-color); font-size: 1rem; }
+        .method-name { font-size: .9rem; font-weight: 700; margin-bottom: 3px; }
+        .method-description { color: var(--text-muted); font-size: .76rem; line-height: 1.45; }
+        .field { margin-bottom: 13px; }
+        .field label { display: block; color: var(--text-muted); font-size: .78rem; margin-bottom: 6px; }
+        .actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 26px; }
+        .msg { margin-top: 17px; padding: 10px 13px; border-radius: var(--radius-sm); font-size: .85rem; }
+        .msg.error { color: var(--danger-color); background: rgba(183,74,61,.08); border: 1px solid rgba(183,74,61,.18); }
+        .msg.success { color: var(--success-color); background: rgba(39,120,92,.08); border: 1px solid rgba(39,120,92,.18); }
+        .empty-state { padding: 30px 16px; text-align: center; color: var(--text-muted); border: 1px dashed var(--border-strong); border-radius: var(--radius-md); background: var(--surface-soft); font-size: .9rem; }
+        .summary-panel { position: sticky; top: 24px; background: #113c34; color: #f9f4e8; border-color: #113c34; }
+        .summary-panel .section-label h2 { color: #f9f4e8; }
+        .summary-panel .section-label span { color: rgba(249,244,232,.55); }
+        .summary { display: grid; gap: 0; }
+        .summary-item { display: flex; justify-content: space-between; gap: 18px; padding: 16px 0; border-bottom: 1px solid rgba(249,244,232,.13); }
+        .summary-item:last-child { border-bottom: none; }
+        .summary-item .label { color: rgba(249,244,232,.6); font-size: .82rem; }
+        .summary-item .value { color: #f9f4e8; font-size: .95rem; font-weight: 600; text-align: right; word-break: break-word; }
+        .summary-item .value.amount { color: #e4bd68; font-family: "Iowan Old Style", "Palatino Linotype", serif; font-size: 1.75rem; line-height: 1.1; }
+        .summary-note { margin-top: 22px; padding-top: 18px; border-top: 1px dashed rgba(249,244,232,.2); color: rgba(249,244,232,.58); font-size: .78rem; line-height: 1.7; }
+        @media (max-width: 860px) {
+            .support-layout { grid-template-columns: 1fr; }
+            .summary-panel { position: static; }
+        }
+        @media (max-width: 600px) {
+            .page-intro { display: block; margin-top: 30px; }
+            .page-intro .btn { margin-top: 18px; }
+            .panel { padding: 22px; }
+            .amounts { grid-template-columns: repeat(2, 1fr); }
+            .methods { grid-template-columns: 1fr; }
+            .actions .btn { flex: 1; }
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <div class="container page-wrap">
+        <header class="site-header">
+            <a class="brand-lockup" href="home.html">
+                <img src="/assets/images/brand-mark.svg" alt="星屿支付">
+                <span class="brand-name">星屿支付<span class="brand-en">Xingyu Pay</span></span>
+            </a>
+            <nav class="nav-links" aria-label="主导航">
+                <a href="home.html">首页</a>
+                <a href="recharge.html">支持中心</a>
+                <a href="history.html">支持记录</a>
+                <a href="help.html">帮助中心</a>
+            </nav>
+        </header>
+
+        <main>
+            <section class="page-intro">
+                <div>
+                    <span class="eyebrow">支持中心</span>
+                    <h1 class="page-title">选择金额，完成这次支持</h1>
+                    <p>每一份心意都会被认真记录。请确认金额与支付方式后继续。</p>
+                </div>
+                <a class="btn btn-secondary" href="history.html">查看支持记录</a>
+            </section>
+
+            <div class="support-layout">
+                <section class="surface panel">
+                    <div class="section-label">
+                        <h2>支持金额</h2>
+                        <span>人民币 CNY</span>
+                    </div>
+                    <div v-if="productList.length > 0" class="amounts">
+                        <button type="button" class="amount" v-for="product in productList" :key="product.id"
+                                :class="{active: selectedProductId === product.id}"
+                                @click="selectProduct(product)" :title="product.description">
+                            <strong>￥{{ formatMoney(product.money) }}</strong>
+                            <small>{{ product.productName }}</small>
+                        </button>
+                    </div>
+                    <div v-else class="empty-state">暂无可选支持金额，请联系管理员配置商品。</div>
+                    <p class="amount-note">金额与收款二维码一一对应，请先选定金额；选定后支付页不会更换为其他金额的二维码。</p>
+
+                    <div class="section-label">
+                        <h2>支付方式</h2>
+                        <span>选择你习惯的渠道</span>
+                    </div>
+                    <div class="methods">
+                        <button type="button" v-for="method in paymentMethods" :key="method.id" class="method"
+                                :class="{active: selectedPayment===method.id, disabled: !method.status}"
+                                @click="method.status ? selectPayment(method.id) : null">
+                            <div class="method-header">
+                                <div class="method-icon">{{ method.icon }}</div>
+                                <div class="method-info">
+                                    <div class="method-name">{{ method.name }}</div>
+                                    <div class="method-description">{{ method.description }}</div>
+                                </div>
+                            </div>
+                        </button>
+                    </div>
+
+                    <div class="field">
+                        <label for="description">订单附言（选填）</label>
+                        <input id="description" type="text" maxlength="120" placeholder="写一句想说的话，会随订单一起记录" v-model.trim="description">
+                    </div>
+                    <div class="field">
+                        <label for="email">接收凭证邮箱（选填）</label>
+                        <input id="email" type="email" placeholder="用于接收支付结果通知" v-model.trim="email">
+                    </div>
+
+                    <div class="actions">
+                        <button class="btn btn-primary" @click="submitRecharge" :disabled="!canSubmit || loading" :style="{opacity: canSubmit ? 1 : .55}">
+                            {{ loading ? '正在创建订单…' : '确认支付' }} <span aria-hidden="true">→</span>
+                        </button>
+                        <a href="history.html" class="btn btn-ghost">查看记录</a>
+                    </div>
+                    <div class="msg" v-if="message" :class="messageType">{{ message }}</div>
+                </section>
+
+                <aside class="surface panel summary-panel">
+                    <div class="section-label">
+                        <h2>本次支持</h2>
+                        <span>ORDER SUMMARY</span>
+                    </div>
+                    <div class="summary">
+                        <div class="summary-item">
+                            <span class="label">支持金额</span>
+                            <span class="value amount">￥{{ finalAmount }}</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="label">支持项目</span>
+                            <span class="value">{{ selectedProductDescription || '请选择固定金额' }}</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="label">支付渠道</span>
+                            <span class="value">{{ payTypeName }}</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="label">当前状态</span>
+                            <span class="value">准备中</span>
+                        </div>
+                    </div>
+                    <div class="summary-note">确认后将进入支付页面。微信按所选金额加载对应二维码；支付宝会拉起金额已锁定的付款页。</div>
+                </aside>
+            </div>
+        </main>
+
+        <footer class="site-footer">
+            <div class="footer-brand"><strong>星屿支付</strong><span>用心连接每一次支持</span></div>
+            <div class="footer-links"><a href="help.html">帮助中心</a><a href="history.html">支持记录</a><a href="recharge.html">开始支付</a></div>
+            <div class="footer-meta">© 2026 星屿支付 · 保留所有权利</div>
+        </footer>
+    </div>
+</div>
+
+<script>
+const { createApp } = Vue;
+
+createApp({
+    data() {
+        return {
+            selectedProductId: null,
+            selectedPayment: 'alipay',
+            description: '',
+            email: '',
+            loading: false,
+            message: '',
+            messageType: '',
+            productList: [],
+            paymentMethods: [
+                { id: 'alipay', name: '支付宝支付', description: '金额已锁定，拉起支付宝付款', icon: '支', status: true },
+                { id: 'wechat', name: '微信支付', description: '扫描对应金额二维码付款', icon: '微', status: true }
+            ]
+        };
+    },
+    computed: {
+        finalAmount() {
+            if (this.selectedProductId) {
+                const p = this.productList.find(x => x.id === this.selectedProductId);
+                return p ? Number(p.money) : 0;
+            }
+            return 0;
+        },
+        canSubmit() { return !!this.selectedProductId && this.finalAmount > 0 && !!this.selectedPayment; },
+        payTypeName() {
+            const method = this.paymentMethods.find(m => m.id === this.selectedPayment);
+            return method ? method.name : '未选择';
+        },
+        selectedProductDescription() {
+            if (this.selectedProductId) {
+                const product = this.productList.find(p => p.id === this.selectedProductId);
+                return product ? (product.description || product.productName) : '';
+            }
+            return '';
+        }
+    },
+    methods: {
+        selectProduct(product) { this.selectedProductId = product.id; this.clearMessages(); },
+        selectPayment(t) { this.selectedPayment = t; this.clearMessages(); },
+        formatMoney(m) { if (m === 0 || m) return Number(m).toFixed(2); return '0.00'; },
+        clearMessages() { this.message = ''; this.messageType = ''; },
+        showError(msg) { this.message = msg; this.messageType = 'error'; },
+        showSuccess(msg) { this.message = msg; this.messageType = 'success'; },
+        async submitRecharge() {
+            if (!this.selectedProductId) { this.showError('请先选择页面提供的固定金额'); return; }
+            if (!this.canSubmit) { this.showError('请先选择支持金额和支付方式'); return; }
+            this.loading = true;
+            this.clearMessages();
+            try {
+                const body = {
+                    productId: this.selectedProductId,
+                    payType: this.selectedPayment,
+                    description: this.description,
+                    nickName: '',
+                    email: this.email
+                };
+                const resp = await postRequest(API_CONFIG.ENDPOINTS.RECHARGE, body);
+                if (resp.code == 200) {
+                    this.showSuccess('订单已创建，正在前往支付页面…');
+                    setTimeout(() => {
+                        const params = new URLSearchParams({
+                            orderId: resp.data.id,
+                            money: (resp.data.money || 0).toFixed(2),
+                            payType: resp.data.payType,
+                            payNum: resp.data.payNum || '',
+                            payQrNum: resp.data.payQrNum || 1,
+                            qrUrl: resp.data.qrUrl || '',
+                            useLocalQrCode: resp.data.localQr ? 'true' : 'false',
+                            matchMode: resp.data.matchMode || 'REMARK',
+                            actualAmount: (resp.data.actualAmount || resp.data.money || 0).toFixed(2)
+                        });
+                        window.location.href = 'payment.html?' + params.toString();
+                    }, 650);
+                } else {
+                    this.showError(resp.msg || '订单创建失败，请稍后重试');
+                }
+            } catch (e) {
+                if ((e.message || '').includes('超时')) this.showError('网络超时，请稍后重试');
+                else if ((e.message || '').includes('HTTP Error')) this.showError('服务器暂时不可用，请稍后重试');
+                else this.showError('订单创建失败，请稍后重试');
+            } finally {
+                this.loading = false;
+            }
+        }
+    },
+    mounted() {
+        if (typeof API_CONFIG === 'undefined') { this.showError('接口配置加载失败'); return; }
+        (async () => {
+            try {
+                const resp = await postRequest(API_CONFIG.ENDPOINTS.PRODUCT_LIST, { types: ['CODE'] });
+                if (resp.code === 200 && resp.data) this.productList = resp.data;
+            } catch (e) {
+                this.showError('支持项目加载失败');
+            }
+        })();
+    }
+}).mount('#app');
+</script>
+</body>
+</html>

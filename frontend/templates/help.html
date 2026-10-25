@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="星屿支付帮助中心，了解支付方式、订单状态与常见问题。">
+    <link rel="icon" href="/assets/images/favicon.svg" type="image/svg+xml">
+    <link rel="alternate icon" href="/assets/images/favicon.ico" sizes="any">
+    <link rel="apple-touch-icon" href="/assets/images/apple-touch-icon.png">
+    <title>帮助中心 · 星屿支付</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/vue/3.3.4/vue.global.min.js" defer></script>
+    <link rel="stylesheet" href="/css/common.css">
+    <script src="/assets/js/api-config.js"></script>
+    <script src="/assets/js/http-util.js"></script>
+    <style>
+        .page-wrap { padding: 36px 0 44px; }
+        .page-intro { text-align: center; margin: 44px 0 32px; }
+        .page-intro h1 { margin: 14px 0 10px; }
+        .page-intro p { color: var(--text-muted); }
+        .help-shell { max-width: 900px; margin: 0 auto; }
+        .nav-tabs { display: flex; gap: 8px; padding: 5px; border-radius: 999px; background: rgba(255,253,247,.7); border: 1px solid var(--border-color); margin-bottom: 22px; }
+        .nav-tab { flex: 1; text-align: center; padding: 10px 14px; border-radius: 999px; color: var(--text-muted); font-size: .86rem; text-decoration: none; font-weight: 600; }
+        .nav-tab:hover { color: var(--primary-color); }
+        .nav-tab.active { color: #fffdf7; background: var(--primary-color); }
+        .help-panel { padding: 32px; }
+        .help-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 30px; }
+        .help-card { padding: 22px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: var(--surface-soft); }
+        .help-card h3 { font-size: .98rem; margin-bottom: 10px; }
+        .help-card p, .help-card li { color: var(--text-muted); font-size: .86rem; line-height: 1.8; }
+        .help-card ul { padding-left: 18px; }
+        .faq-section { border-top: 1px solid var(--border-color); padding-top: 26px; }
+        .faq-section > h2 { font-family: "Iowan Old Style", "Palatino Linotype", "Noto Serif SC", serif; font-size: 1.25rem; margin-bottom: 15px; }
+        .faq-item { border-bottom: 1px solid var(--border-color); }
+        .faq-question { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 17px 2px; cursor: pointer; font-size: .94rem; font-weight: 600; color: var(--text-soft); }
+        .faq-question .arrow { color: var(--secondary-color); font-size: 1.1rem; transition: transform .2s ease; }
+        .faq-question.active { color: var(--primary-color); }
+        .faq-question.active .arrow { transform: rotate(180deg); }
+        .faq-answer { max-height: 0; overflow: hidden; transition: max-height .25s ease; }
+        .faq-answer.active { max-height: 260px; }
+        .faq-answer p { color: var(--text-muted); font-size: .87rem; line-height: 1.85; padding: 0 2px 18px; }
+        .contact-card { margin-top: 24px; padding: 23px; text-align: center; border-radius: var(--radius-md); background: #113c34; color: #f9f4e8; }
+        .contact-card h3 { font-family: "Iowan Old Style", "Palatino Linotype", "Noto Serif SC", serif; margin-bottom: 7px; }
+        .contact-card p { color: rgba(249,244,232,.62); font-size: .82rem; }
+        .contact-info { display: inline-block; margin-top: 12px; padding: 7px 15px; border: 1px solid rgba(249,244,232,.2); border-radius: 999px; color: #e4bd68; font-size: .84rem; }
+        @media (max-width: 760px) {
+            .help-grid { grid-template-columns: 1fr; }
+            .help-panel { padding: 22px; }
+            .nav-tabs { overflow-x: auto; }
+            .nav-tab { white-space: nowrap; }
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <div class="container page-wrap">
+        <header class="site-header">
+            <a class="brand-lockup" href="home.html">
+                <img src="/assets/images/brand-mark.svg" alt="星屿支付">
+                <span class="brand-name">星屿支付<span class="brand-en">Xingyu Pay</span></span>
+            </a>
+            <nav class="nav-links" aria-label="主导航">
+                <a href="home.html">首页</a>
+                <a href="recharge.html">支持中心</a>
+                <a href="history.html">支持记录</a>
+                <a href="help.html">帮助中心</a>
+            </nav>
+        </header>
+
+        <main class="help-shell">
+            <section class="page-intro">
+                <span class="eyebrow">Help Center</span>
+                <h1 class="page-title">需要一点帮助？</h1>
+                <p>关于支付、订单和记录，这里有你需要的答案。</p>
+            </section>
+
+            <div class="nav-tabs">
+                <a href="recharge.html" class="nav-tab">支持中心</a>
+                <a href="history.html" class="nav-tab">支持记录</a>
+                <a href="help.html" class="nav-tab active">帮助中心</a>
+            </div>
+
+            <section class="surface help-panel">
+                <div class="help-grid">
+                    <article class="help-card">
+                        <h3>支付方式</h3>
+                        <p>仅支持支付宝与微信。页面提供固定金额，不接受自行输入；微信二维码与所选金额一一对应，支付宝付款页会锁定金额。</p>
+                    </article>
+                    <article class="help-card">
+                        <h3>订单确认</h3>
+                        <p>支付完成后页面会自动查询状态。若状态未更新，请稍候片刻并刷新页面，或查看支持记录。</p>
+                    </article>
+                    <article class="help-card">
+                        <h3>支付安全</h3>
+                        <p>请确认访问的是本站域名，不要向任何人透露验证码、支付密码或完整银行卡信息。</p>
+                    </article>
+                </div>
+
+                <div class="faq-section">
+                    <h2>常见问题</h2>
+                    <div class="faq-item" v-for="(faq, index) in faqList" :key="index">
+                        <div class="faq-question" :class="{ active: faq.isOpen }" @click="toggleFaq(index)">
+                            <span>{{ faq.question }}</span>
+                            <span class="arrow">⌄</span>
+                        </div>
+                        <div class="faq-answer" :class="{ active: faq.isOpen }">
+                            <p>{{ faq.answer }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="contact-card">
+                    <h3>还需要人工协助？</h3>
+                    <p>请通过下方邮箱联系站点管理员，并附上订单编号。</p>
+                    <div class="contact-info" th:text="${supportMail}">support@example.com</div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="site-footer">
+            <div class="footer-brand"><strong>星屿支付</strong><span>用心连接每一次支持</span></div>
+            <div class="footer-links"><a href="help.html">帮助中心</a><a href="history.html">支持记录</a><a href="recharge.html">开始支付</a></div>
+            <div class="footer-meta">© 2026 星屿支付 · 保留所有权利</div>
+        </footer>
+    </div>
+</div>
+
+<script>
+window.addEventListener('DOMContentLoaded', function() {
+    if (typeof Vue === 'undefined') return;
+    const { createApp } = Vue;
+    createApp({
+        data() {
+            return {
+                faqList: [
+                    { question: '支付后多久能确认？', answer: '系统会在页面中每 2 秒查询一次订单状态。通常支付完成后几秒内即可确认；若网络延迟，请稍候并刷新页面。', isOpen: false },
+                    { question: '付款时忘记填写备注怎么办？', answer: '微信支付请在备注中填写页面显示的订单标识号；若忘记填写，请尽快联系站点管理员，并提供订单编号与支付凭证。支付宝付款页已锁定金额。', isOpen: false },
+                    { question: '可以自己输入金额吗？', answer: '不可以。页面只提供与收款二维码对应的固定金额，选定金额后支付页不会更换为其他金额的二维码。', isOpen: false },
+                    { question: '在哪里查看我的支持记录？', answer: '进入「支持记录」页面即可查看当前站点记录的订单金额、渠道、状态和时间。', isOpen: false },
+                    { question: '支持哪些浏览器？', answer: '建议使用最新版 Chrome、Edge、Safari 或微信内置浏览器。若页面显示异常，请先刷新或更换浏览器重试。', isOpen: false },
+                    { question: '订单超时了怎么办？', answer: '返回支持中心重新发起一笔订单即可。请勿对已超时订单重复付款。', isOpen: false }
+                ]
+            };
+        },
+        methods: {
+            toggleFaq(index) { this.faqList[index].isOpen = !this.faqList[index].isOpen; }
+        }
+    }).mount('#app');
+});
+</script>
+</body>
+</html>
