@@ -16,7 +16,8 @@
     <a href="#快速开始">快速开始</a> ·
     <a href="#宝塔面板部署">宝塔部署</a> ·
     <a href="#安全设计">安全设计</a> ·
-    <a href="OPEN_API.md">OpenAPI</a>
+    <a href="OPEN_API.md">OpenAPI</a> ·
+    <a href="docs/TROUBLESHOOTING.md">排障</a>
   </p>
 </div>
 
@@ -167,6 +168,33 @@ deploy/baota/env.example
 ```
 
 > 前端目录与后端目录必须分开；站点根目录不要放 `.env`、JAR、日志或数据库备份。
+
+### 部署后自检
+
+```bash
+systemctl is-active paypro                 # active
+pgrep -fc xingyu-pay-backend.jar           # 1，不能是 2
+ss -lntp | grep ':8889'                    # 只有一个 java
+
+curl -s -o /dev/null -w 'home=%{http_code}\n'     http://127.0.0.1:8889/home.html
+curl -s -o /dev/null -w 'review=%{http_code}\n'   'http://127.0.0.1:8889/review?id=00000000000000000000000000000000&t=00000000000000000000000000000000'
+curl -s -o /dev/null -w 'manifest=%{http_code}\n' http://127.0.0.1:8889/site.webmanifest
+```
+
+三个 `200` 加 `count=1` 才算部署完成。
+
+### 三个必须知道的坑
+
+1. **换包不等于生效。** Java 启动时打开 JAR，覆盖上传后旧进程仍持有旧 inode，
+   `sha256sum` 是新的、接口却还是旧行为。换包后务必确认 `pgrep -fc` 是 `1`
+   且进程启动时间晚于 `jar_mtime`；不确定就跑 `sh deploy/restart-clean.sh`。
+2. **一个 JAR 只能有一个守护者。** 宝塔「Java项目」生成的 `spring_<名称>.service`
+   会和 `paypro.service` 抢同一个 `8889`，表现是“时好时坏”。
+   用 `sh deploy/dedupe-service.sh` 只留一个，并在面板里删掉那个 Java 项目。
+3. **`.env` 在启动时读一次。** 改完必须 `systemctl restart paypro`；
+   权限保持 `600`，且绝不能进 Git。
+
+完整现象 → 判定 → 处置见 **[docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)**。
 
 ## 配置说明
 

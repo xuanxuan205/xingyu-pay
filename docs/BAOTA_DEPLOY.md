@@ -508,3 +508,74 @@ journalctl -u paypro -n 80 --no-pager | grep -i -E 'ADMIN_TOKEN|OPENAPI_SECRET|D
 ## 20. 许可证
 
 本项目使用 MIT License。部署和二次分发前，请同时阅读仓库根目录的 `LICENSE` 与 `NOTICE`。
+
+## 21. 只能有一个守护者（最容易踩的坑）
+
+同一个 JAR 只能由一个 systemd 单元托管。宝塔「网站 → Java项目」会为 JAR 生成
+`spring_<名称>.service`，如果它和手写的 `paypro.service` 同时存在，就是两个 java
+进程抢同一个 `127.0.0.1:8889`：
+
+```text
+paypro.service         loaded activating auto-restart     <- 抢不到端口，反复重启
+spring_paypro.service  loaded active     running          <- 抢到了，在用旧 class 应答
+```
+
+症状非常有迷惑性：**磁盘上 JAR 是新包、`sha256sum` 也对，新接口却 404**。因为
+应答的是那个“启动时打开的是旧 JAR”的进程，或者另一个进程根本没绑定成功。
+
+先确认有没有两个：
+
+```bash
+systemctl list-units --type=service --all | grep -iE 'pay|java'
+pgrep -fc xingyu-pay-backend.jar        # 必须是 1
+ss -lntp | grep ':8889'                 # 必须只有一个 java
+```
+
+只保留 `paypro.service`（它 `User=www`、读 `.env`）：
+
+```bash
+sh deploy/dedupe-service.sh
+```
+
+然后**去宝塔面板「网站 → Java项目」把那个项目删掉**。只 `systemctl disable` 不够，
+unit 文件还在 `/usr/lib/systemd/system/`，面板点一次「启动」就复活。
+
+宝塔生成的单元里 `ExecStop` 只 `pkill` 那个 bash 脚本，不认它 fork 出来的 java，
+所以换包后必须补一刀：
+
+```bash
+pkill -f xingyu-pay-backend.jar
+```
+
+## 22. 部署后自检（必做）
+
+```bash
+cd /www/wwwroot/xingyu-pay-backend
+
+echo "state=$(systemctl is-active paypro)"
+echo "count=$(pgrep -fc xingyu-pay-backend.jar)"
+ss -lntp | grep ':8889'
+sha256sum xingyu-pay-backend.jar
+
+curl -s -o /dev/null -w 'home=%{http_code}\n'     http://127.0.0.1:8889/home.html
+curl -s -o /dev/null -w 'review=%{http_code}\n'   'http://127.0.0.1:8889/review?id=00000000000000000000000000000000&t=00000000000000000000000000000000'
+curl -s -o /dev/null -w 'manifest=%{http_code}\n' http://127.0.0.1:8889/site.webmanifest
+curl -s -D - -o /dev/null http://127.0.0.1:8889/home.html | grep -Ei 'content-security-policy|x-frame-options|x-content-type-options'
+```
+
+期望：
+
+```text
+state=active
+count=1
+127.0.0.1:8889 只有一个 java
+home=200  review=200  manifest=200
+X-Frame-Options: DENY
+Content-Security-Policy: default-src 'self'; ...
+```
+
+换包前后各跑一次。换完新包不放心就再跑 `sh deploy/restart-clean.sh`，它会
+stop → `pkill` 残留 → 确认端口释放 → start → 把上面这些探测重跑一遍，最后一行是
+`RESULT=OK` 才算过。
+
+更细的排障见 [`TROUBLESHOOTING.md`](TROUBLESHOOTING.md)。
