@@ -5,6 +5,7 @@
   <p>把个人收款做成一个体面、可控、属于自己的页面。</p>
   <p>
     <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-0b6b5b?style=flat-square" alt="License"></a>
+    <a href="CHANGELOG.md"><img src="https://img.shields.io/badge/version-1.0.0-c08a2e?style=flat-square" alt="Version"></a>
     <a href="pom.xml"><img src="https://img.shields.io/badge/Java-8-c08a2e?style=flat-square" alt="Java"></a>
     <a href="pom.xml"><img src="https://img.shields.io/badge/Spring%20Boot-2.3-0b6b5b?style=flat-square" alt="Spring Boot"></a>
     <a href="deploy/database.sql"><img src="https://img.shields.io/badge/MySQL-5.7%2B-2f6f8f?style=flat-square" alt="MySQL"></a>
@@ -15,6 +16,7 @@
     <a href="#功能">功能</a> ·
     <a href="#快速开始">快速开始</a> ·
     <a href="#宝塔面板部署">宝塔部署</a> ·
+    <a href="#二次开发">二次开发</a> ·
     <a href="#安全设计">安全设计</a> ·
     <a href="OPEN_API.md">OpenAPI</a> ·
     <a href="docs/TROUBLESHOOTING.md">排障</a>
@@ -195,6 +197,45 @@ curl -s -o /dev/null -w 'manifest=%{http_code}\n' http://127.0.0.1:8889/site.web
    权限保持 `600`，且绝不能进 Git。
 
 完整现象 → 判定 → 处置见 **[docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)**。
+
+## 二次开发
+
+这个项目是**按“给别人改成自己的”来拆的**：页面和静态资源在独立目录，品牌配置全走
+`.env`，商品与支付方式由 YAML 驱动，换收款码不用重新编译。
+
+| 想改什么 | 改哪里 | 要不要重启 |
+| --- | --- | --- |
+| 站点标题 / 收款人 / 支持邮箱 | `.env` | 要 |
+| 配色 / 字体 / 圆角 | `frontend/static/css/common.css` 的 `:root` | 不要，刷新即可 |
+| 页面文案与结构 | `frontend/templates/*.html` | 不要 |
+| 图标 / favicon / 分享封面 | `frontend/static/assets/images/*` | 不要 |
+| 商品、金额、支付方式 | `config/application-prod.yml` | 要 |
+| 收款二维码 | `QR_DIR/{alipay,wechat}/...` | 不要，立即生效 |
+| 订单流程、新接口 | `src/main/java/com/wendao/**` | 要重新打包 |
+
+改品牌只动 `.env`：
+
+```bash
+SITE_TITLE=星屿支付
+INDEX_TITLE=星屿支付
+PAYEE_NAME=Your Name
+EMAIL_BRAND_NAME=星屿支付
+SUPPORT_MAIL=you@example.com
+SITE_URL=https://pay.example.com
+```
+
+换配色只动三个变量（`--primary-color`、`--ink`、`--secondary-color`），全站立刻变。
+
+加金额只做两件事：在 `paypro.products` 加一条 `money: "8.00"`，并把二维码放到
+`QR_DIR/wechat/8.00/1.png`。
+
+> 二次开发请守住四条：**GET 不改订单状态**、**金额只信服务端**、
+> **审核 token 一次性**、**`ADMIN_TOKEN` 与 `OPENAPI_SECRET` 必须不同**。
+
+完整的文件地图、图标清单、邮件模板注意事项（邮件和页面共用同一个 Thymeleaf 模板，
+这是最容易踩的坑）、构建与打包命令见 **[docs/CUSTOMIZE.md](docs/CUSTOMIZE.md)**。
+
+版本历史见 **[CHANGELOG.md](CHANGELOG.md)**。
 
 ## 配置说明
 
